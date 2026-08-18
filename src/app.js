@@ -5,6 +5,8 @@ import morgan from 'morgan';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import config from './config/index.js';
+import swaggerUi from 'swagger-ui-express';
+import swaggerJsdoc from 'swagger-jsdoc';
 
 // Rotas da API
 import apiRoutes from './routes/api.routes.js';
@@ -12,12 +14,51 @@ import apiRoutes from './routes/api.routes.js';
 // Middlewares
 import { identifyTenant, checkTenantLimits } from './middleware/tenant.js';
 
-// Configurações de caminho para servir o frontend
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const publicPath = path.resolve(__dirname, '../public');
 
 const app = express();
+
+// ===========================================
+// Configuração do Swagger (Documentação Automática)
+// ===========================================
+const swaggerOptions = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'DiixWhatsapp API',
+      version: '1.0.0-alpha',
+      description: 'Sistema multi-tenant de bot para vendas no WhatsApp usando Evolution API',
+      contact: {
+        name: 'DiixWhatsapp Team',
+      },
+    },
+    servers: [
+      {
+        url: 'http://localhost:3333/api/v1',
+        description: 'Servidor de Desenvolvimento',
+      },
+      {
+        url: 'https://api.diixwhatsapp.com/api/v1',
+        description: 'Servidor de Produção',
+      },
+    ],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+          description: 'Token JWT obtido via /auth/login ou /auth/register',
+        },
+      },
+    },
+    security: [{ bearerAuth: [] }],
+  },
+  apis: ['./src/routes/*.js', './src/controllers/*.js'],
+};
+
+const swaggerSpec = swaggerJsdoc(swaggerOptions);
 
 // Security middleware
 app.use(helmet());
@@ -41,10 +82,15 @@ if (config.nodeEnv === 'development') {
 }
 
 // ===========================================
-// Servir Frontend Estático (Vue 3 Buildado)
+// Configuração do EJS para Views
 // ===========================================
-console.log(`📁 Servindo frontend estático de: ${publicPath}`);
-app.use(express.static(publicPath));
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, '../views'));
+
+// ===========================================
+// Arquivos Estáticos
+// ===========================================
+app.use('/public', express.static(path.join(__dirname, '../public')));
 
 // Health check
 app.get('/health', (req, res) => {
@@ -63,6 +109,8 @@ app.get('/api', (req, res) => {
     version: '1.0.0-alpha',
     description: 'Sistema multi-tenant de bot para vendas no WhatsApp usando Evolution API',
     documentation: '/docs',
+    swaggerUI: '/api-docs',
+    swaggerJSON: '/api-docs.json',
     endpoints: {
       health: '/health',
       api: '/api/v1',
@@ -70,6 +118,38 @@ app.get('/api', (req, res) => {
     },
   });
 });
+
+// ===========================================
+// Rotas de Páginas (Views EJS)
+// ===========================================
+app.get('/', (req, res) => {
+  res.render('index', {
+    title: 'DiixWhatsapp API',
+    year: new Date().getFullYear(),
+    nodeEnv: config.nodeEnv
+  });
+});
+
+// Rota para documentação Swagger UI integrada
+app.get('/docs', (req, res) => {
+  res.render('documentation', {
+    title: 'Documentação da API',
+    year: new Date().getFullYear(),
+    swaggerUrl: '/api-docs.json'
+  });
+});
+
+// Rota JSON da documentação Swagger
+app.get('/api-docs.json', (req, res) => {
+  res.json(swaggerSpec);
+});
+
+// Swagger UI completo em /api-docs
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
+  explorer: true,
+  customCss: '.swagger-ui .topbar { display: none }',
+  customSiteTitle: 'DiixWhatsapp API Docs',
+}));
 
 // ===========================================
 // Rotas da API v1
@@ -83,29 +163,18 @@ app.use('/api/v1', apiRoutes);
 // Webhook da Evolution API
 // app.post('/webhook', webhookController.handle);
 
-// ===========================================
-// Rota Catch-all para SPA Vue Router
-// Serve index.html para todas as rotas não-API
-// ===========================================
-app.get('/{*path}', (req, res) => {
-  // Se for uma rota de API, ignora (não deve chegar aqui)
-  if (req.path.startsWith('/api') || req.path.startsWith('/webhook')) {
-    return res.status(404).json({
-      error: 'Not Found',
-      message: `Rota ${req.method} ${req.path} não encontrada.`,
-    });
-  }
-  
-  // Caso contrário, serve o index.html para o Vue Router lidar
-  res.sendFile(path.join(publicPath, 'index.html'));
-});
-
 // 404 Handler (apenas para APIs)
 app.use((req, res) => {
   if (req.path.startsWith('/api') || req.path.startsWith('/webhook')) {
     res.status(404).json({
       error: 'Not Found',
       message: `Rota ${req.method} ${req.path} não encontrada.`,
+    });
+  } else {
+    // Para rotas não-API, retorna 404 simples
+    res.status(404).json({
+      error: 'Not Found',
+      message: 'Rota não encontrada.',
     });
   }
 });

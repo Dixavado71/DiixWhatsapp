@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> - Home</title>
+  <link rel="stylesheet" href="/public/css/style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1><%= title %></h1>
+      <p class="subtitle">Sistema multi-tenant de bot para vendas no WhatsApp</p>
+    </header>
+
+    <main>
+      <section class="intro">
+        <h2>Bem-vindo à API DiixWhatsapp</h2>
+        <p>Esta é uma API RESTful completa para gerenciamento de bots de vendas no WhatsApp usando Evolution API.</p>
+      </section>
+
+      <section class="features">
+        <h2>Recursos Principais</h2>
+        <div class="feature-grid">
+          <div class="feature-card">
+            <h3>🏢 Multi-Tenant</h3>
+            <p>Suporte completo para múltiplos tenants com isolamento de dados e limites configuráveis.</p>
+          </div>
+          <div class="feature-card">
+            <h3>🔐 Autenticação JWT</h3>
+            <p>Sistema seguro de autenticação com JSON Web Tokens e refresh tokens.</p>
+          </div>
+          <div class="feature-card">
+            <h3>📦 Gestão de Produtos</h3>
+            <p>CRUD completo de produtos com categorias, preços e estoque.</p>
+          </div>
+          <div class="feature-card">
+            <h3>💬 Integration WhatsApp</h3>
+            <p>Integração nativa com Evolution API para automação de mensagens.</p>
+          </div>
+          <div class="feature-card">
+            <h3>⚡ Redis Cache</h3>
+            <p>Cache distribuído e filas com Redis para alta performance.</p>
+          </div>
+          <div class="feature-card">
+            <h3>🗄️ PostgreSQL + Prisma</h3>
+            <p>Banco de dados robusto com ORM moderno e type-safe.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="api-info">
+        <h2>Informações da API</h2>
+        <div class="info-box">
+          <p><strong>Versão:</strong> 1.0.0-alpha</p>
+          <p><strong>Ambiente:</strong> <%= process.env.NODE_ENV || 'development' %></p>
+          <p><strong>Base URL:</strong> <code>/api/v1</code></p>
+        </div>
+      </section>
+
+      <section class="endpoints">
+        <h2>Endpoints Principais</h2>
+        <div class="endpoint-list">
+          <div class="endpoint-item">
+            <span class="method get">GET</span>
+            <code>/api/v1/auth/me</code>
+            <span class="desc">Obter dados do usuário autenticado</span>
+          </div>
+          <div class="endpoint-item">
+            <span class="method post">POST</span>
+            <code>/api/v1/auth/login</code>
+            <span class="desc">Realizar login</span>
+          </div>
+          <div class="endpoint-item">
+            <span class="method get">GET</span>
+            <code>/api/v1/products</code>
+            <span class="desc">Listar produtos do tenant</span>
+          </div>
+          <div class="endpoint-item">
+            <span class="method get">GET</span>
+            <code>/api/v1/admin/tenants</code>
+            <span class="desc">Listar todos os tenants (Super Admin)</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="cta">
+        <h2>Comece Agora</h2>
+        <p>Explore a documentação completa da API para entender todos os endpoints disponíveis.</p>
+        <a href="/docs" class="btn btn-primary">Ver Documentação Completa</a>
+        <a href="/health" class="btn btn-secondary">Testar Health Check</a>
+      </section>
+    </main>
+
+    <footer>
+      <p>&copy; <%= year %> DiixWhatsapp API. Todos os direitos reservados.</p>
+      <p>
+        <a href="/docs">Documentação</a> | 
+        <a href="/health">Health Check</a> | 
+        <a href="/api">Info da API</a>
+      </p>
+    </footer>
+  </div>
+</body>
+</html>

@@ -16,15 +16,16 @@ export function initializeDatabase() {
   
   console.log(`📦 Inicializando banco de dados: ${dbProvider.toUpperCase()}`);
   
+  // Configuração condicional para evitar erro quando DATABASE_URL não está disponível
+  const datasourceConfig = config.databaseUrl 
+    ? { db: { url: config.databaseUrl } }
+    : {};
+  
   prisma = new PrismaClient({
     log: config.nodeEnv === 'development' 
       ? ['query', 'info', 'warn', 'error'] 
       : ['error', 'warn'],
-    datasources: {
-      db: {
-        url: config.databaseUrl,
-      },
-    },
+    ...(Object.keys(datasourceConfig).length > 0 && { datasources: datasourceConfig }),
   });
   
   return prisma;

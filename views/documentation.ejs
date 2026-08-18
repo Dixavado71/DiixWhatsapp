@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/public/css/style.css">
+  <!-- Swagger UI CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css" />
+  <style>
+    .swagger-container {
+      margin-top: 30px;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .doc-intro {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    .quick-links {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      margin: 20px 0;
+    }
+    .quick-link-card {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      flex: 1;
+      min-width: 200px;
+      transition: transform 0.3s ease;
+    }
+    .quick-link-card:hover {
+      transform: translateY(-5px);
+    }
+    .quick-link-card h3 {
+      color: white;
+      margin-bottom: 10px;
+    }
+    .quick-link-card p {
+      color: rgba(255,255,255,0.9);
+      font-size: 0.9rem;
+    }
+    .feature-highlight {
+      background: #e8f4f8;
+      border-left: 4px solid #3700ff;
+      padding: 15px;
+      margin: 15px 0;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1><%= title %></h1>
+      <p class="subtitle">Documentação completa e interativa da API REST</p>
+    </header>
+
+    <main>
+      <section class="doc-intro">
+        <h2>📚 Visão Geral da Documentação</h2>
+        <p>Bem-vindo à documentação oficial da DiixWhatsapp API. Esta página fornece acesso completo a todos os endpoints da API com exemplos interativos.</p>
+        
+        <div class="feature-highlight">
+          <strong>🔐 Autenticação:</strong> A maioria dos endpoints requer autenticação via JWT Token. 
+          Inclua o token no header: <code>Authorization: Bearer &lt;seu_token&gt;</code>
+        </div>
+
+        <div class="info-box">
+          <p><strong>Base URL:</strong> <code>http://localhost:3333/api/v1</code></p>
+          <p><strong>Versão da API:</strong> 1.0.0-alpha</p>
+          <p><strong>Formato:</strong> JSON</p>
+          <p><strong>Swagger JSON:</strong> <a href="/api-docs.json" target="_blank">/api-docs.json</a></p>
+        </div>
+      </section>
+
+      <section>
+        <h2>🚀 Opções de Documentação</h2>
+        <div class="quick-links">
+          <a href="/api-docs" class="quick-link-card">
+            <h3>📖 Swagger UI Completo</h3>
+            <p>Interface interativa para testar todos os endpoints diretamente no navegador. Inclui autenticação integrada e exemplos de requisições/respostas.</p>
+          </a>
+          <a href="/api-docs.json" class="quick-link-card" target="_blank">
+            <h3>📄 Swagger JSON</h3>
+            <p>Especificação OpenAPI em formato JSON. Ideal para integração com outras ferramentas e geração de clientes SDK.</p>
+          </a>
+          <a href="/" class="quick-link-card">
+            <h3>🏠 Página Inicial</h3>
+            <p>Volte para a página inicial com visão geral dos recursos e endpoints principais da API.</p>
+          </a>
+        </div>
+      </section>
+
+      <section>
+        <h2>🛠️ Swagger UI Interativo</h2>
+        <p>Abaixo está a documentação Swagger UI completa integrada diretamente nesta página:</p>
+        <div id="swagger-ui" class="swagger-container"></div>
+      </section>
+
+      <section class="intro">
+        <h2>📋 Categorias de Endpoints</h2>
+        <div class="feature-grid">
+          <div class="feature-card">
+            <h3>🔐 Autenticação</h3>
+            <p>Registro, login, gestão de perfil e alteração de senha. Endpoints: <code>/auth/register</code>, <code>/auth/login</code>, <code>/auth/me</code>, <code>/auth/profile</code>, <code>/auth/change-password</code></p>
+          </div>
+          <div class="feature-card">
+            <h3>👑 Administração</h3>
+            <p>Gestão de tenants pelo Super Admin. Estatísticas, criação, atualização, bloqueio e remoção de tenants.</p>
+          </div>
+          <div class="feature-card">
+            <h3>📦 Produtos</h3>
+            <p>CRUD completo de produtos multi-tenant. Categorias, preços, estoque e imagens.</p>
+          </div>
+          <div class="feature-card">
+            <h3>💬 Webhooks</h3>
+            <p>Integração com Evolution API para recebimento de eventos do WhatsApp.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="intro">
+        <h2>🗄️ Bancos de Dados Suportados</h2>
+        <div class="feature-grid">
+          <div class="feature-card">
+            <h3>PostgreSQL + Prisma ORM</h3>
+            <p>Banco principal com modelo type-safe. Tabelas: users, tenants, products, categories, sessions.</p>
+          </div>
+          <div class="feature-card">
+            <h3>Redis</h3>
+            <p>Cache distribuído, sessões e filas. Rate limiting e otimização de performance.</p>
+          </div>
+          <div class="feature-card">
+            <h3>MongoDB (Opcional)</h3>
+            <p>Disponível para logs, webhooks e dados não-relacionais.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="intro">
+        <h2>⚙️ Comandos Disponíveis</h2>
+        <div class="info-box">
+          <p><code>npm run dev</code> - Iniciar em modo desenvolvimento</p>
+          <p><code>npm start</code> - Iniciar em produção</p>
+          <p><code>npm test</code> - Rodar testes</p>
+          <p><code>npm run db:migrate</code> - Executar migrações Prisma</p>
+          <p><code>npm run db:generate</code> - Gerar cliente Prisma</p>
+          <p><code>npm run db:seed</code> - Popular banco com dados iniciais</p>
+          <p><code>npm run db:studio</code> - Abrir Prisma Studio GUI</p>
+        </div>
+      </section>
+
+      <section class="cta">
+        <h2>Pronto para Começar?</h2>
+        <p>Teste a API agora mesmo ou explore a documentação completa.</p>
+        <a href="/" class="btn btn-secondary">Voltar ao Início</a>
+        <a href="/health" class="btn btn-secondary">Testar Health Check</a>
+        <a href="/api-docs" class="btn btn-primary" target="_blank">Abrir Swagger UI</a>
+      </section>
+    </main>
+
+    <footer>
+      <p>&copy; <%= year %> DiixWhatsapp API. Todos os direitos reservados.</p>
+      <p>
+        <a href="/">Home</a> | 
+        <a href="/docs">Documentação</a> | 
+        <a href="/api-docs">Swagger UI</a> | 
+        <a href="/health">Health Check</a> | 
+        <a href="/api">Info da API</a>
+      </p>
+    </footer>
+  </div>
+
+  <!-- Swagger UI JS -->
+  <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
+  <script>
+    window.onload = function() {
+      // Inicializar Swagger UI
+      const ui = SwaggerUIBundle({
+        url: '<%= swaggerUrl %>',
+        dom_id: '#swagger-ui',
+        presets: [
+          SwaggerUIBundle.presets.apis,
+          SwaggerUIBundle.SwaggerUIStandalonePreset
+        ],
+        layout: "BaseLayout",
+        deepLinking: true,
+        showExtensions: true,
+        showCommonExtensions: true,
+        filter: true,
+        validatorUrl: null,
+        onComplete: function() {
+          console.log('Swagger UI carregado com sucesso!');
+        }
+      });
+      
+      window.ui = ui;
+    };
+  </script>
+</body>
+</html>

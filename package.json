@@ -11,8 +11,6 @@
   "scripts": {
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
-    "build:frontend": "cd frontend && npm run build",
-    "build": "npm run build:frontend && echo \"✅ Build completo realizado!\"",
     "test": "jest --coverage",
     "test:watch": "jest --watch",
     "lint": "eslint src/**/*.js",
@@ -31,8 +29,8 @@
     "nodejs",
     "sales",
     "ecommerce",
-    "vue3",
-    "vuetify"
+    "api",
+    "rest"
   ],
   "author": "DiixWhatsapp Team",
   "license": "MIT",
@@ -46,6 +44,7 @@
     "cors": "^2.8.6",
     "dayjs": "^1.11.23",
     "dotenv": "^17.4.2",
+    "ejs": "^6.0.1",
     "express": "^5.2.1",
     "express-rate-limit": "^8.6.2",
     "helmet": "^8.3.0",
@@ -55,6 +54,8 @@
     "mongoose": "^9.9.3",
     "morgan": "^1.11.0",
     "prisma": "^4.16.2",
+    "swagger-jsdoc": "^6.3.0",
+    "swagger-ui-express": "^5.0.1",
     "uuid": "^14.0.1"
   },
   "devDependencies": {
