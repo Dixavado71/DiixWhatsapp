@@ -8,6 +8,10 @@ let prisma = null;
  * Suporta PostgreSQL e MongoDB através do Prisma
  */
 export function initializeDatabase() {
+  if (prisma) {
+    return prisma;
+  }
+  
   const dbProvider = config.database?.provider || 'postgresql';
   
   console.log(`📦 Inicializando banco de dados: ${dbProvider.toUpperCase()}`);
@@ -30,17 +34,15 @@ export function initializeDatabase() {
  * Conecta ao banco de dados com retry lógico
  */
 export async function connectDatabase(maxRetries = 5) {
-  if (!prisma) {
-    initializeDatabase();
-  }
+  const instance = initializeDatabase();
   
   let attempt = 0;
   
   while (attempt < maxRetries) {
     try {
-      await prisma.$connect();
+      await instance.$connect();
       console.log('✅ Banco de dados conectado com sucesso!');
-      return prisma;
+      return instance;
     } catch (error) {
       attempt++;
       console.error(`❌ Falha na conexão (tentativa ${attempt}/${maxRetries}):`, error.message);
@@ -66,6 +68,7 @@ export async function disconnectDatabase() {
     try {
       await prisma.$disconnect();
       console.log('🔌 Banco de dados desconectado.');
+      prisma = null;
     } catch (error) {
       console.error('Erro ao desconectar banco de dados:', error);
     }
@@ -98,5 +101,10 @@ export async function checkDatabaseHealth() {
   }
 }
 
-// Exporta instância singleton
-export default prisma;
+// Exporta getter para acessar a instância após inicialização
+export default function getPrisma() {
+  if (!prisma) {
+    return initializeDatabase();
+  }
+  return prisma;
+}

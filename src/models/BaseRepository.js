@@ -1,4 +1,4 @@
-import prisma from '../config/database.js';
+import getPrisma from '../config/database.js';
 
 /**
  * Repository base para operações comuns
@@ -14,11 +14,12 @@ export class BaseRepository {
    * Busca todos os registros do tenant
    */
   async findAll(where = {}) {
+    const finalWhere = this.tenantId 
+      ? { tenantId: this.tenantId, ...where }
+      : where;
+    
     return this.model.findMany({
-      where: {
-        tenantId: this.tenantId,
-        ...where,
-      },
+      where: finalWhere,
     });
   }
 
@@ -26,23 +27,23 @@ export class BaseRepository {
    * Busca um registro por ID
    */
   async findById(id) {
-    return this.model.findFirst({
-      where: {
-        id,
-        tenantId: this.tenantId,
-      },
-    });
+    const where = this.tenantId
+      ? { id, tenantId: this.tenantId }
+      : { id };
+    
+    return this.model.findFirst({ where });
   }
 
   /**
    * Cria um novo registro
    */
   async create(data) {
+    const createData = this.tenantId
+      ? { ...data, tenantId: this.tenantId }
+      : data;
+    
     return this.model.create({
-      data: {
-        ...data,
-        tenantId: this.tenantId,
-      },
+      data: createData,
     });
   }
 
@@ -50,11 +51,12 @@ export class BaseRepository {
    * Atualiza um registro existente
    */
   async update(id, data) {
+    const where = this.tenantId
+      ? { id, tenantId: this.tenantId }
+      : { id };
+    
     return this.model.update({
-      where: {
-        id,
-        tenantId: this.tenantId,
-      },
+      where,
       data,
     });
   }
@@ -63,23 +65,23 @@ export class BaseRepository {
    * Remove um registro
    */
   async delete(id) {
-    return this.model.delete({
-      where: {
-        id,
-        tenantId: this.tenantId,
-      },
-    });
+    const where = this.tenantId
+      ? { id, tenantId: this.tenantId }
+      : { id };
+    
+    return this.model.delete({ where });
   }
 
   /**
    * Conta registros do tenant
    */
   async count(where = {}) {
+    const finalWhere = this.tenantId
+      ? { tenantId: this.tenantId, ...where }
+      : where;
+    
     return this.model.count({
-      where: {
-        tenantId: this.tenantId,
-        ...where,
-      },
+      where: finalWhere,
     });
   }
 
@@ -87,11 +89,12 @@ export class BaseRepository {
    * Busca paginada
    */
   async findPaginated({ skip = 0, take = 10, orderBy = { createdAt: 'desc' }, where = {} }) {
+    const finalWhere = this.tenantId
+      ? { tenantId: this.tenantId, ...where }
+      : where;
+    
     return this.model.findMany({
-      where: {
-        tenantId: this.tenantId,
-        ...where,
-      },
+      where: finalWhere,
       skip,
       take,
       orderBy,
