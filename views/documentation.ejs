@@ -5,75 +5,55 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= title %></title>
   <link rel="stylesheet" href="/public/css/style.css">
+  <!-- Swagger UI CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css" />
   <style>
-    .swagger-section { margin: 20px 0; }
-    .swagger-section h2 { color: #3700ff; }
-    .endpoint-group { 
-      background: #f5f5f5; 
-      padding: 15px; 
-      border-radius: 8px; 
-      margin: 15px 0;
-    }
-    .endpoint-group h3 { 
-      color: #4a4a4a; 
-      border-bottom: 2px solid #3700ff;
-      padding-bottom: 10px;
-    }
-    .endpoint-detail {
+    .swagger-container {
+      margin-top: 30px;
       background: white;
-      padding: 15px;
-      margin: 10px 0;
-      border-left: 4px solid #3700ff;
-      border-radius: 4px;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     }
-    .method {
-      display: inline-block;
-      padding: 4px 8px;
-      border-radius: 4px;
-      font-weight: bold;
-      font-size: 12px;
-      margin-right: 10px;
+    .doc-intro {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
     }
-    .get { background: #61affe; color: white; }
-    .post { background: #49cc90; color: white; }
-    .put { background: #fca130; color: white; }
-    .delete { background: #f93e3e; color: white; }
-    .patch { background: #50e3c2; color: white; }
-    code {
-      background: #f5f5f5;
-      padding: 2px 6px;
-      border-radius: 3px;
-      font-family: 'Courier New', monospace;
+    .quick-links {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      margin: 20px 0;
     }
-    .auth-required {
-      background: #fff3cd;
-      border: 1px solid #ffc107;
-      padding: 10px;
-      border-radius: 4px;
-      margin: 10px 0;
-    }
-    .param-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 10px 0;
-    }
-    .param-table th, .param-table td {
-      border: 1px solid #ddd;
-      padding: 8px;
-      text-align: left;
-    }
-    .param-table th {
-      background: #3700ff;
+    .quick-link-card {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
+      padding: 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      flex: 1;
+      min-width: 200px;
+      transition: transform 0.3s ease;
     }
-    .response-example {
-      background: #2d2d2d;
-      color: #f8f8f2;
+    .quick-link-card:hover {
+      transform: translateY(-5px);
+    }
+    .quick-link-card h3 {
+      color: white;
+      margin-bottom: 10px;
+    }
+    .quick-link-card p {
+      color: rgba(255,255,255,0.9);
+      font-size: 0.9rem;
+    }
+    .feature-highlight {
+      background: #e8f4f8;
+      border-left: 4px solid #3700ff;
       padding: 15px;
+      margin: 15px 0;
       border-radius: 4px;
-      overflow-x: auto;
-      font-family: 'Courier New', monospace;
-      font-size: 13px;
     }
   </style>
 </head>
@@ -81,272 +61,87 @@
   <div class="container">
     <header>
       <h1><%= title %></h1>
-      <p class="subtitle">Documentação completa da API REST</p>
+      <p class="subtitle">Documentação completa e interativa da API REST</p>
     </header>
 
     <main>
-      <section class="intro">
-        <h2>Visão Geral</h2>
-        <p>A API DiixWhatsapp é uma solução completa para gerenciamento de bots de vendas no WhatsApp com arquitetura multi-tenant.</p>
+      <section class="doc-intro">
+        <h2>📚 Visão Geral da Documentação</h2>
+        <p>Bem-vindo à documentação oficial da DiixWhatsapp API. Esta página fornece acesso completo a todos os endpoints da API com exemplos interativos.</p>
         
-        <div class="auth-required">
+        <div class="feature-highlight">
           <strong>🔐 Autenticação:</strong> A maioria dos endpoints requer autenticação via JWT Token. 
           Inclua o token no header: <code>Authorization: Bearer &lt;seu_token&gt;</code>
         </div>
 
         <div class="info-box">
           <p><strong>Base URL:</strong> <code>http://localhost:3333/api/v1</code></p>
-          <p><strong>Versão:</strong> 1.0.0-alpha</p>
+          <p><strong>Versão da API:</strong> 1.0.0-alpha</p>
           <p><strong>Formato:</strong> JSON</p>
+          <p><strong>Swagger JSON:</strong> <a href="/api-docs.json" target="_blank">/api-docs.json</a></p>
         </div>
       </section>
 
-      <section class="swagger-section">
-        <h2>📚 Endpoints da API</h2>
-        
-        <!-- Autenticação -->
-        <div class="endpoint-group">
-          <h3>🔐 Autenticação</h3>
-          
-          <div class="endpoint-detail">
-            <span class="method post">POST</span>
-            <code>/auth/register</code>
-            <p><strong>Descrição:</strong> Registrar novo usuário e criar tenant</p>
-            <table class="param-table">
-              <tr><th>Parâmetro</th><th>Tipo</th><th>Obrigatório</th><th>Descrição</th></tr>
-              <tr><td>name</td><td>string</td><td>Sim</td><td>Nome completo do usuário</td></tr>
-              <tr><td>email</td><td>string</td><td>Sim</td><td>E-mail único</td></tr>
-              <tr><td>password</td><td>string</td><td>Sim</td><td>Senha (mínimo 6 caracteres)</td></tr>
-              <tr><td>companyName</td><td>string</td><td>Sim</td><td>Nome da empresa/tenant</td></tr>
-              <tr><td>plan</td><td>string</td><td>Não</td><td>Plano (basic, pro, enterprise)</td></tr>
-            </table>
-            <div class="response-example">{
-  "success": true,
-  "message": "Usuário registrado com sucesso",
-  "data": {
-    "user": { "id": "...", "name": "...", "email": "..." },
-    "tenant": { "id": "...", "slug": "...", "plan": "basic" },
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-  }
-}</div>
-          </div>
-
-          <div class="endpoint-detail">
-            <span class="method post">POST</span>
-            <code>/auth/login</code>
-            <p><strong>Descrição:</strong> Realizar login</p>
-            <table class="param-table">
-              <tr><th>Parâmetro</th><th>Tipo</th><th>Obrigatório</th><th>Descrição</th></tr>
-              <tr><td>email</td><td>string</td><td>Sim</td><td>E-mail do usuário</td></tr>
-              <tr><td>password</td><td>string</td><td>Sim</td><td>Senha do usuário</td></tr>
-            </table>
-            <div class="response-example">{
-  "success": true,
-  "message": "Login realizado com sucesso",
-  "data": {
-    "user": { "id": "...", "name": "...", "email": "..." },
-    "tenant": { "id": "...", "slug": "...", "plan": "basic" },
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-    "expiresIn": 86400
-  }
-}</div>
-          </div>
-
-          <div class="endpoint-detail">
-            <span class="method get">GET</span>
-            <code>/auth/me</code>
-            <p><strong>Descrição:</strong> Obter dados do usuário autenticado</p>
-            <p><strong>Auth:</strong> Requer token JWT</p>
-            <div class="response-example">{
-  "success": true,
-  "data": {
-    "user": { "id": "...", "name": "...", "email": "..." },
-    "tenant": { "id": "...", "slug": "...", "plan": "basic" }
-  }
-}</div>
-          </div>
-
-          <div class="endpoint-detail">
-            <span class="method put">PUT</span>
-            <code>/auth/profile</code>
-            <p><strong>Descrição:</strong> Atualizar perfil do usuário</p>
-            <p><strong>Auth:</strong> Requer token JWT</p>
-          </div>
-
-          <div class="endpoint-detail">
-            <span class="method put">PUT</span>
-            <code>/auth/change-password</code>
-            <p><strong>Descrição:</strong> Alterar senha</p>
-            <p><strong>Auth:</strong> Requer token JWT</p>
-          </div>
+      <section>
+        <h2>🚀 Opções de Documentação</h2>
+        <div class="quick-links">
+          <a href="/api-docs" class="quick-link-card">
+            <h3>📖 Swagger UI Completo</h3>
+            <p>Interface interativa para testar todos os endpoints diretamente no navegador. Inclui autenticação integrada e exemplos de requisições/respostas.</p>
+          </a>
+          <a href="/api-docs.json" class="quick-link-card" target="_blank">
+            <h3>📄 Swagger JSON</h3>
+            <p>Especificação OpenAPI em formato JSON. Ideal para integração com outras ferramentas e geração de clientes SDK.</p>
+          </a>
+          <a href="/" class="quick-link-card">
+            <h3>🏠 Página Inicial</h3>
+            <p>Volte para a página inicial com visão geral dos recursos e endpoints principais da API.</p>
+          </a>
         </div>
+      </section>
 
-        <!-- Administração -->
-        <div class="endpoint-group">
-          <h3>👑 Administração (Super Admin)</h3>
-          <p class="auth-required"><strong>Nota:</strong> Estes endpoints requerem role <code>SUPER_ADMIN</code></p>
+      <section>
+        <h2>🛠️ Swagger UI Interativo</h2>
+        <p>Abaixo está a documentação Swagger UI completa integrada diretamente nesta página:</p>
+        <div id="swagger-ui" class="swagger-container"></div>
+      </section>
 
-          <div class="endpoint-detail">
-            <span class="method get">GET</span>
-            <code>/admin/stats</code>
-            <p><strong>Descrição:</strong> Estatísticas globais do sistema</p>
-            <p><strong>Auth:</strong> SUPER_ADMIN required</p>
-            <div class="response-example">{
-  "success": true,
-  "data": {
-    "totalTenants": 15,
-    "activeTenants": 12,
-    "blockedTenants": 3,
-    "totalUsers": 45,
-    "totalProducts": 1250,
-    "tenantsByPlan": {
-      "basic": 8,
-      "pro": 5,
-      "enterprise": 2
-    }
-  }
-}</div>
+      <section class="intro">
+        <h2>📋 Categorias de Endpoints</h2>
+        <div class="feature-grid">
+          <div class="feature-card">
+            <h3>🔐 Autenticação</h3>
+            <p>Registro, login, gestão de perfil e alteração de senha. Endpoints: <code>/auth/register</code>, <code>/auth/login</code>, <code>/auth/me</code>, <code>/auth/profile</code>, <code>/auth/change-password</code></p>
           </div>
-
-          <div class="endpoint-detail">
-            <span class="method get">GET</span>
-            <code>/admin/tenants</code>
-            <p><strong>Descrição:</strong> Listar todos os tenants</p>
-            <p><strong>Query Params:</strong> page, limit, search, plan, status</p>
-            <p><strong>Auth:</strong> SUPER_ADMIN required</p>
+          <div class="feature-card">
+            <h3>👑 Administração</h3>
+            <p>Gestão de tenants pelo Super Admin. Estatísticas, criação, atualização, bloqueio e remoção de tenants.</p>
           </div>
-
-          <div class="endpoint-detail">
-            <span class="method post">POST</span>
-            <code>/admin/tenants</code>
-            <p><strong>Descrição:</strong> Criar novo tenant manualmente</p>
-            <p><strong>Auth:</strong> SUPER_ADMIN required</p>
+          <div class="feature-card">
+            <h3>📦 Produtos</h3>
+            <p>CRUD completo de produtos multi-tenant. Categorias, preços, estoque e imagens.</p>
           </div>
-
-          <div class="endpoint-detail">
-            <span class="method get">GET</span>
-            <code>/admin/tenants/:id</code>
-            <p><strong>Descrição:</strong> Obter detalhes de um tenant</p>
-            <p><strong>Auth:</strong> SUPER_ADMIN required</p>
-          </div>
-
-          <div class="endpoint-detail">
-            <span class="method put">PUT</span>
-            <code>/admin/tenants/:id</code>
-            <p><strong>Descrição:</strong> Atualizar tenant</p>
-            <p><strong>Auth:</strong> SUPER_ADMIN required</p>
-          </div>
-
-          <div class="endpoint-detail">
-            <span class="method put">PUT</span>
-            <code>/admin/tenants/:id/block</code>
-            <p><strong>Descrição:</strong> Bloquear/Desbloquear tenant</p>
-            <p><strong>Auth:</strong> SUPER_ADMIN required</p>
-          </div>
-
-          <div class="endpoint-detail">
-            <span class="method delete">DELETE</span>
-            <code>/admin/tenants/:id</code>
-            <p><strong>Descrição:</strong> Deletar tenant permanentemente</p>
-            <p><strong>Auth:</strong> SUPER_ADMIN required</p>
-          </div>
-        </div>
-
-        <!-- Produtos -->
-        <div class="endpoint-group">
-          <h3>📦 Produtos (Multi-Tenant)</h3>
-          <p class="auth-required"><strong>Nota:</strong> Todos os endpoints são isolados por tenant</p>
-
-          <div class="endpoint-detail">
-            <span class="method get">GET</span>
-            <code>/products</code>
-            <p><strong>Descrição:</strong> Listar produtos do tenant</p>
-            <p><strong>Query Params:</strong> page, limit, category, search, minPrice, maxPrice</p>
-            <p><strong>Auth:</strong> Requer token JWT</p>
-            <div class="response-example">{
-  "success": true,
-  "data": {
-    "products": [
-      {
-        "id": "...",
-        "name": "Produto Exemplo",
-        "description": "...",
-        "price": 99.90,
-        "category": "Eletrônicos",
-        "stock": 50,
-        "images": ["url1", "url2"]
-      }
-    ],
-    "pagination": {
-      "page": 1,
-      "limit": 10,
-      "total": 25,
-      "totalPages": 3
-    }
-  }
-}</div>
-          </div>
-
-          <div class="endpoint-detail">
-            <span class="method get">GET</span>
-            <code>/products/categories</code>
-            <p><strong>Descrição:</strong> Listar categorias de produtos</p>
-            <p><strong>Auth:</strong> Requer token JWT</p>
-          </div>
-
-          <div class="endpoint-detail">
-            <span class="method get">GET</span>
-            <code>/products/:id</code>
-            <p><strong>Descrição:</strong> Obter produto específico</p>
-            <p><strong>Auth:</strong> Requer token JWT</p>
-          </div>
-
-          <div class="endpoint-detail">
-            <span class="method post">POST</span>
-            <code>/products</code>
-            <p><strong>Descrição:</strong> Criar novo produto</p>
-            <p><strong>Auth:</strong> Requer token JWT</p>
-            <table class="param-table">
-              <tr><th>Parâmetro</th><th>Tipo</th><th>Obrigatório</th><th>Descrição</th></tr>
-              <tr><td>name</td><td>string</td><td>Sim</td><td>Nome do produto</td></tr>
-              <tr><td>description</td><td>string</td><td>Não</td><td>Descrição detalhada</td></tr>
-              <tr><td>price</td><td>number</td><td>Sim</td><td>Preço do produto</td></tr>
-              <tr><td>category</td><td>string</td><td>Sim</td><td>Categoria</td></tr>
-              <tr><td>stock</td><td>number</td><td>Não</td><td>Quantidade em estoque</td></tr>
-              <tr><td>images</td><td>array</td><td>Não</td><td>URLs das imagens</td></tr>
-            </table>
-          </div>
-
-          <div class="endpoint-detail">
-            <span class="method put">PUT</span>
-            <code>/products/:id</code>
-            <p><strong>Descrição:</strong> Atualizar produto existente</p>
-            <p><strong>Auth:</strong> Requer token JWT</p>
-          </div>
-
-          <div class="endpoint-detail">
-            <span class="method delete">DELETE</span>
-            <code>/products/:id</code>
-            <p><strong>Descrição:</strong> Deletar produto</p>
-            <p><strong>Auth:</strong> Requer token JWT</p>
+          <div class="feature-card">
+            <h3>💬 Webhooks</h3>
+            <p>Integração com Evolution API para recebimento de eventos do WhatsApp.</p>
           </div>
         </div>
       </section>
 
       <section class="intro">
-        <h2>🗄️ Bancos de Dados</h2>
+        <h2>🗄️ Bancos de Dados Suportados</h2>
         <div class="feature-grid">
           <div class="feature-card">
             <h3>PostgreSQL + Prisma ORM</h3>
-            <p>Banco de dados principal com modelo type-safe. Tabelas: users, tenants, products, categories, sessions.</p>
+            <p>Banco principal com modelo type-safe. Tabelas: users, tenants, products, categories, sessions.</p>
           </div>
           <div class="feature-card">
             <h3>Redis</h3>
-            <p>Cache distribuído, sessões e filas. Configuração para rate limiting e otimização de performance.</p>
+            <p>Cache distribuído, sessões e filas. Rate limiting e otimização de performance.</p>
           </div>
           <div class="feature-card">
             <h3>MongoDB (Opcional)</h3>
-            <p>Disponível para logs, webhooks e dados não-relacionais. Dependências mantidas no package.json.</p>
+            <p>Disponível para logs, webhooks e dados não-relacionais.</p>
           </div>
         </div>
       </section>
@@ -366,8 +161,10 @@
 
       <section class="cta">
         <h2>Pronto para Começar?</h2>
-        <a href="/" class="btn btn-primary">Voltar ao Início</a>
-        <a href="/health" class="btn btn-secondary">Testar API</a>
+        <p>Teste a API agora mesmo ou explore a documentação completa.</p>
+        <a href="/" class="btn btn-secondary">Voltar ao Início</a>
+        <a href="/health" class="btn btn-secondary">Testar Health Check</a>
+        <a href="/api-docs" class="btn btn-primary" target="_blank">Abrir Swagger UI</a>
       </section>
     </main>
 
@@ -376,10 +173,38 @@
       <p>
         <a href="/">Home</a> | 
         <a href="/docs">Documentação</a> | 
+        <a href="/api-docs">Swagger UI</a> | 
         <a href="/health">Health Check</a> | 
         <a href="/api">Info da API</a>
       </p>
     </footer>
   </div>
+
+  <!-- Swagger UI JS -->
+  <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
+  <script>
+    window.onload = function() {
+      // Inicializar Swagger UI
+      const ui = SwaggerUIBundle({
+        url: '<%= swaggerUrl %>',
+        dom_id: '#swagger-ui',
+        presets: [
+          SwaggerUIBundle.presets.apis,
+          SwaggerUIBundle.SwaggerUIStandalonePreset
+        ],
+        layout: "BaseLayout",
+        deepLinking: true,
+        showExtensions: true,
+        showCommonExtensions: true,
+        filter: true,
+        validatorUrl: null,
+        onComplete: function() {
+          console.log('Swagger UI carregado com sucesso!');
+        }
+      });
+      
+      window.ui = ui;
+    };
+  </script>
 </body>
 </html>
