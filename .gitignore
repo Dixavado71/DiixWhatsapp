@@ -2,47 +2,34 @@
 # Dependencies
 node_modules/
 
-# Prisma
-prisma/migrations/
-prisma/generated/
+# Build artifacts
+dist/
+build/
+public/assets/
 
-# Environment variables
+# Environment
 .env
 .env.local
 .env.*
 
-# Build outputs
-dist/
-build/
-target/
+# Editors
+.vscode/
+.idea/
 
 # Logs
 *.log
 
-# Temporary files
-*.tmp
-*.swp
-
-# IDE files
-.vscode/
-.idea/
-
-# Python cache (if any Python files exist in project)
+# Python
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
 
-# Coverage reports
-coverage/
-htmlcov/
-.coverage
+# Temporary files
+*.tmp
+*.swp
 
 # OS generated files
 .DS_Store
 Thumbs.db
-
-# Package lock files (already tracked)
-# package-lock.json
-# yarn.lock
 ```
