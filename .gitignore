@@ -7,6 +7,10 @@ dist/
 build/
 target/
 
+# IDE files
+.vscode/
+.idea/
+
 # Logs
 *.log
 
