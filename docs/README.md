@@ -19,10 +19,11 @@ Comece por aqui se você está conhecendo o projeto agora:
 Documentação técnica para desenvolvimento:
 1. [🏗️ Arquitetura do Sistema](./02-arquitetura.md) - Diagramas e fluxos técnicos
 2. [🗄️ Bancos de Dados & Redis](./04-banco-dados-redis.md) ⭐ - PostgreSQL, MongoDB e Redis
-3. [📝 Padrões de Código](./11-padroes-codigo.md) - Boas práticas e convenções
-4. [🔌 API Reference](./12-api-reference.md) - Documentação completa da API
-5. [🧪 Estratégia de Testes](./13-testes.md) - Como testar o código
-6. [📁 Estrutura de Arquivos](./17-estrutura-arquivos.md) - Organização do código
+3. [🎨 Frontend Vue 3](./24-frontend.md) ⭐ NOVO - Painel admin com tema Dark Cyber
+4. [📝 Padrões de Código](./11-padroes-codigo.md) - Boas práticas e convenções
+5. [🔌 API Reference](./12-api-reference.md) - Documentação completa da API
+6. [🧪 Estratégia de Testes](./13-testes.md) - Como testar o código
+7. [📁 Estrutura de Arquivos](./17-estrutura-arquivos.md) - Organização do código
 
 ### 🔧 Sou Administrador/Configurador
 Guias para configuração e deploy:
