@@ -1,4 +1,4 @@
-// Backend Tests - Configuração Jest para ES Modules
+// Backend Tests - Configuração Jest com Babel para ES Modules
 module.exports = {
   testEnvironment: 'node',
   verbose: true,
@@ -20,10 +20,10 @@ module.exports = {
   },
   testMatch: ['**/tests/backend/**/*.test.js'],
   moduleFileExtensions: ['js', 'json'],
-  transform: {},
-  moduleNameMapper: {
-    '^(\\.{1,2}/.*)\\.js$': '$1'
+  transform: {
+    '^.+\\.jsx?$': ['babel-jest', { presets: [['@babel/preset-env', { targets: { node: 'current' } }]] }]
   },
+  transformIgnorePatterns: [],
   setupFilesAfterEnv: ['<rootDir>/tests/setup.js'],
   testTimeout: 30000,
   forceExit: false,

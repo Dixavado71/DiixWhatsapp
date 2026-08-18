@@ -1,40 +1,15 @@
-// Setup file for backend tests
-import { jest } from '@jest/globals';
+/**
+ * Setup Global para Testes Backend
+ */
 
-// Mock console em testes
-global.console = {
-  ...console,
-  log: jest.fn(),
-  error: jest.fn(),
-  warn: jest.fn(),
-  info: jest.fn(),
-};
-
-// Mock de variáveis de ambiente
 process.env.NODE_ENV = 'test';
-process.env.DATABASE_URL = process.env.DATABASE_URL || 'postgresql://test:test@localhost:5432/diix_test';
-process.env.EVOLUTION_API_URL = process.env.EVOLUTION_API_URL || 'http://localhost:8080';
-process.env.EVOLUTION_API_KEY = process.env.EVOLUTION_API_KEY || 'test-key';
+process.env.JWT_SECRET = 'test-jwt-secret-key-for-testing-only-123456789';
+process.env.JWT_EXPIRES_IN = '1h';
+process.env.DATABASE_URL = 'postgresql://test:test@localhost:5432/test_db';
+process.env.REDIS_HOST = 'localhost';
+process.env.REDIS_PORT = '6379';
+process.env.API_KEY = 'test-api-key';
 
-// Helper para aguardar tempo
-global.waitFor = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+jest.setTimeout(30000);
 
-// Helper para criar mock de request do Express
-global.createMockRequest = (overrides = {}) => ({
-  headers: {},
-  params: {},
-  query: {},
-  body: {},
-  tenant: null,
-  ...overrides,
-});
-
-// Helper para criar mock de response do Express
-global.createMockResponse = () => {
-  const res = {};
-  res.status = jest.fn().mockReturnValue(res);
-  res.json = jest.fn().mockReturnValue(res);
-  res.send = jest.fn().mockReturnValue(res);
-  res.redirect = jest.fn().mockReturnValue(res);
-  return res;
-};
+console.log('✅ Setup de testes backend inicializado');
