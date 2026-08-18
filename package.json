@@ -11,6 +11,8 @@
   "scripts": {
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
+    "build:frontend": "cd frontend && npm run build",
+    "build": "npm run build:frontend && echo \"✅ Build completo realizado!\"",
     "test": "jest --coverage",
     "test:watch": "jest --watch",
     "lint": "eslint src/**/*.js",
@@ -28,7 +30,9 @@
     "express",
     "nodejs",
     "sales",
-    "ecommerce"
+    "ecommerce",
+    "vue3",
+    "vuetify"
   ],
   "author": "DiixWhatsapp Team",
   "license": "MIT",

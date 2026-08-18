@@ -2,13 +2,17 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import config from './config/index.js';
 
 // Middlewares
 import { identifyTenant, checkTenantLimits } from './middleware/tenant.js';
 
-// Rotas (serão criadas)
-// import routes from './routes/index.js';
+// Configurações de caminho para servir o frontend
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const publicPath = path.resolve(__dirname, '../public');
 
 const app = express();
 
@@ -33,6 +37,12 @@ if (config.nodeEnv === 'development') {
   app.use(morgan('combined'));
 }
 
+// ===========================================
+// Servir Frontend Estático (Vue 3 Buildado)
+// ===========================================
+console.log(`📁 Servindo frontend estático de: ${publicPath}`);
+app.use(express.static(publicPath));
+
 // Health check
 app.get('/health', (req, res) => {
   res.status(200).json({
@@ -44,7 +54,7 @@ app.get('/health', (req, res) => {
 });
 
 // API Info
-app.get('/', (req, res) => {
+app.get('/api', (req, res) => {
   res.status(200).json({
     name: 'DiixWhatsapp API',
     version: '1.0.0-alpha',
@@ -68,12 +78,31 @@ app.get('/', (req, res) => {
 // Webhook da Evolution API
 // app.post('/webhook', webhookController.handle);
 
-// 404 Handler
+// ===========================================
+// Rota Catch-all para SPA Vue Router
+// Serve index.html para todas as rotas não-API
+// ===========================================
+app.get('/{*path}', (req, res) => {
+  // Se for uma rota de API, ignora (não deve chegar aqui)
+  if (req.path.startsWith('/api') || req.path.startsWith('/webhook')) {
+    return res.status(404).json({
+      error: 'Not Found',
+      message: `Rota ${req.method} ${req.path} não encontrada.`,
+    });
+  }
+  
+  // Caso contrário, serve o index.html para o Vue Router lidar
+  res.sendFile(path.join(publicPath, 'index.html'));
+});
+
+// 404 Handler (apenas para APIs)
 app.use((req, res) => {
-  res.status(404).json({
-    error: 'Not Found',
-    message: `Rota ${req.method} ${req.path} não encontrada.`,
-  });
+  if (req.path.startsWith('/api') || req.path.startsWith('/webhook')) {
+    res.status(404).json({
+      error: 'Not Found',
+      message: `Rota ${req.method} ${req.path} não encontrada.`,
+    });
+  }
 });
 
 // Error Handler

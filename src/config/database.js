@@ -101,10 +101,15 @@ export async function checkDatabaseHealth() {
   }
 }
 
-// Exporta getter para acessar a instância após inicialização
-export default function getPrisma() {
+/**
+ * Obtém a instância do Prisma - garante inicialização prévia
+ * Deve ser chamado APÓS connectDatabase() ser executado
+ */
+export function getPrisma() {
   if (!prisma) {
-    return initializeDatabase();
+    throw new Error('Prisma não inicializado. Chame connectDatabase() primeiro.');
   }
   return prisma;
 }
+
+export default getPrisma;
