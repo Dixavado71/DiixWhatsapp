@@ -105,6 +105,9 @@ Este documento descreve o plano de desenvolvimento do **DiixWhatsapp** dividido 
 - [x] Campanhas promocionais segmentadas (Campaign)
 - [x] Schema do banco atualizado (v2.1.0)
 - [x] Documentação de e-commerce criada
+- [x] Controllers API implementados (7 novos)
+- [x] **Rotas API registradas (65+ novas rotas)**
+- [x] Prisma Client gerado e validado
 
 ### Entregáveis - REALIZADOS
 
@@ -158,6 +161,23 @@ Este documento descreve o plano de desenvolvimento do **DiixWhatsapp** dividido 
 - ✅ Segmentação avançada
 - ✅ Controle de usos e limites
 - ✅ Vinculação com descontos
+
+#### API REST Completa ✅
+- ✅ 11 rotas de carrinho (list, get, create, update, delete, items, checkout, etc.)
+- ✅ 11 rotas de pedidos (list, stats, export, CRUD, status, webhook PIX)
+- ✅ 11 rotas de clientes (CRUD, tags, histórico, estatísticas)
+- ✅ 7 rotas de descontos (CRUD, validate, calculate)
+- ✅ 9 rotas de campanhas (CRUD, stats, performance, activate/deactivate)
+- ✅ 9 rotas de chaves PIX (CRUD, default, toggle, generate QR)
+- ✅ 7 rotas de endereços (CRUD, default, validate CEP)
+- ✅ **Total: 65+ novas rotas API**
+
+#### Documentação Técnica ✅
+- ✅ Swagger/OpenAPI atualizado automaticamente
+- ✅ JSDoc comments em todas as rotas
+- ✅ Documentação de e-commerce criada (docs/18-sistema-ecommerce-vendas.md)
+- ✅ Análise completa do projeto (docs/19-analise-completa-projeto.md)
+- ✅ Roadmap atualizado com novo status
 
 ### Métricas de Sucesso Q1.5 - ATINGIDAS
 - ✅ Schema 100% implementado
