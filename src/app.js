@@ -6,6 +6,9 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import config from './config/index.js';
 
+// Rotas da API
+import apiRoutes from './routes/api.routes.js';
+
 // Middlewares
 import { identifyTenant, checkTenantLimits } from './middleware/tenant.js';
 
@@ -68,12 +71,14 @@ app.get('/api', (req, res) => {
   });
 });
 
+// ===========================================
+// Rotas da API v1
+// ===========================================
+app.use('/api/v1', apiRoutes);
+
 // Middleware de identificação do tenant (aplicado nas rotas da API)
 // app.use('/api/v1', identifyTenant);
 // app.use('/api/v1', checkTenantLimits);
-
-// Rotas da API
-// app.use('/api/v1', routes);
 
 // Webhook da Evolution API
 // app.post('/webhook', webhookController.handle);
