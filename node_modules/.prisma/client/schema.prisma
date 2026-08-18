@@ -11,19 +11,44 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// Enum para Roles (Papéis do Usuário)
+enum Role {
+  SUPER_ADMIN     // Dono da plataforma - acesso total
+  TENANT_ADMIN    // Dono da loja - acesso ao seu tenant
+  ATTENDANT       // Atendente - acesso limitado
+  VIEWER          // Apenas visualização
+}
+
+// Enum para Status do Tenant
+enum TenantStatus {
+  ACTIVE
+  SUSPENDED
+  INACTIVE
+  TRIAL
+}
+
+// Enum para Planos
+enum PlanType {
+  FREE
+  BASIC
+  PRO
+  ENTERPRISE
+}
+
 // Tenant (Loja/Empresa)
 model Tenant {
-  id          String   @id @default(uuid())
+  id          String      @id @default(uuid())
   name        String
-  slug        String   @unique
+  slug        String      @unique
   email       String
   phone       String?
-  plan        String   @default("basic") // basic, pro, enterprise
-  status      String   @default("active") // active, suspended, inactive
-  maxAccounts Int      @default(5)
-  maxMessages Int      @default(1000)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  plan        PlanType    @default(FREE)
+  status      TenantStatus @default(TRIAL)
+  maxAccounts Int         @default(3)
+  maxMessages Int         @default(500)
+  trialEndsAt DateTime?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
   
   // Relacionamentos
   accounts    WhatsAppAccount[]
@@ -31,27 +56,32 @@ model Tenant {
   conversations Conversation[]
   orders      Order[]
   configs     TenantConfig[]
+  products    Product[]
+  auditLogs   AuditLog[]
   
   @@index([slug])
   @@index([status])
+  @@index([plan])
 }
 
-// Usuários do sistema (administradores de cada tenant)
+// Usuários do sistema (administradores de cada tenant + Super Admin)
 model User {
   id        String   @id @default(uuid())
-  tenantId  String
+  tenantId  String?  // Null para SUPER_ADMIN
   email     String
   password  String
   name      String
-  role      String   @default("user") // admin, user, viewer
-  status    String   @default("active")
+  role      Role     @default(VIEWER)
+  status    String   @default("active") // active, inactive, blocked
+  lastLogin DateTime?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   
-  tenant    Tenant   @relation(fields: [tenantId], references: [id])
+  tenant    Tenant?  @relation(fields: [tenantId], references: [id])
   
-  @@unique([tenantId, email])
+  @@unique([email])
   @@index([tenantId])
+  @@index([role])
 }
 
 // Contas WhatsApp vinculadas a cada tenant
@@ -149,6 +179,33 @@ model Order {
   @@index([createdAt])
 }
 
+// Produtos/Catálogo por Tenant
+model Product {
+  id          String   @id @default(uuid())
+  tenantId    String
+  name        String
+  description String?
+  sku         String?
+  price       Decimal  @db.Decimal(10, 2)
+  costPrice   Decimal? @db.Decimal(10, 2)
+  stock       Int      @default(0)
+  category    String?
+  images      Json?    // Array de URLs de imagens
+  active      Boolean  @default(true)
+  featured    Boolean  @default(false)
+  metadata    Json?    // Dados adicionais (variações, atributos, etc)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+  
+  @@index([tenantId])
+  @@index([category])
+  @@index([active])
+  @@index([featured])
+  @@unique([tenantId, sku])
+}
+
 // Configurações do tenant
 model TenantConfig {
   id          String   @id @default(uuid())
@@ -178,7 +235,10 @@ model AuditLog {
   userAgent   String?
   createdAt   DateTime @default(now())
   
+  tenant      Tenant?  @relation(fields: [tenantId], references: [id])
+  
   @@index([tenantId])
   @@index([action])
   @@index([createdAt])
+  @@index([userId])
 }
