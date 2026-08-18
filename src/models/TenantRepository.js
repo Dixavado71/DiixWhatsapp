@@ -1,18 +1,25 @@
-import prisma from '../config/database.js';
+import getPrisma from '../config/database.js';
 import BaseRepository from './BaseRepository.js';
+
+// Lazy load do prisma para garantir que esteja inicializado
+const getTenantModel = () => {
+  const prisma = getPrisma();
+  return prisma.tenant;
+};
 
 /**
  * Repository para gerenciamento de Tenants
  */
 class TenantRepository extends BaseRepository {
   constructor() {
-    super(prisma.tenant, null); // Tenant não tem escopo de tenant
+    super(getTenantModel(), null); // Tenant não tem escopo de tenant
   }
 
   /**
    * Busca tenant por slug
    */
   async findBySlug(slug) {
+    const prisma = getPrisma();
     return prisma.tenant.findUnique({
       where: { slug },
       include: {
@@ -26,6 +33,7 @@ class TenantRepository extends BaseRepository {
    * Busca tenant por ID com dados relacionados
    */
   async findByIdWithRelations(id) {
+    const prisma = getPrisma();
     return prisma.tenant.findUnique({
       where: { id },
       include: {
@@ -54,6 +62,7 @@ class TenantRepository extends BaseRepository {
    * Verifica limites do tenant
    */
   async checkLimits(tenantId) {
+    const prisma = getPrisma();
     const tenant = await prisma.tenant.findUnique({
       where: { id: tenantId },
       include: {
@@ -89,6 +98,7 @@ class TenantRepository extends BaseRepository {
    * Atualiza status do tenant
    */
   async updateStatus(id, status) {
+    const prisma = getPrisma();
     return prisma.tenant.update({
       where: { id },
       data: { status },
@@ -99,6 +109,7 @@ class TenantRepository extends BaseRepository {
    * Lista todos os tenants com paginação
    */
   async listAll({ skip = 0, take = 10, status = 'active' }) {
+    const prisma = getPrisma();
     const where = status ? { status } : {};
     
     const [tenants, total] = await Promise.all([
