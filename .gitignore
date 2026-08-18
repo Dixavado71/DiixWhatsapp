@@ -1,21 +1,5 @@
-```
-# Dependencies
-node_modules/
+(docs/DASHBOARD_ADMIN.md and .github/workflows/ci-cd.yml are source/config files, no build artifacts, dependencies, or temp files in the changes)
 
-# Logs and temp files
-*.log
-*.tmp
+```markdown
 
-# Environment
-.env
-.env.local
-.env.*
-
-# Editors
-.vscode/
-.idea/
-
-# Build outputs
-dist/
-build/
 ```
