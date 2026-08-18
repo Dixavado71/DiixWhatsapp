@@ -186,7 +186,8 @@ router.post('/carts', authenticate, ensureTenantAccess, cartController.createCar
  * @desc    Atualizar carrinho
  * @access  TENANT_ADMIN, ATTENDANT, CUSTOMER (dono do carrinho)
  */
-router.put('/carts/:id', authenticate, ensureTenantAccess, cartController.updateCart);
+// router.put('/carts/:id', authenticate, ensureTenantAccess, cartController.updateCart);
+// Nota: Método updateCart não implementado no controller
 
 /**
  * @route   DELETE /api/v1/carts/:id
@@ -200,7 +201,7 @@ router.delete('/carts/:id', authenticate, ensureTenantAccess, cartController.can
  * @desc    Adicionar item ao carrinho
  * @access  TENANT_ADMIN, ATTENDANT, CUSTOMER
  */
-router.post('/carts/:id/items', authenticate, ensureTenantAccess, cartController.addItemToCart);
+router.post('/carts/:id/items', authenticate, ensureTenantAccess, cartController.addCartItem);
 
 /**
  * @route   PUT /api/v1/carts/:id/items/:itemId
@@ -214,7 +215,7 @@ router.put('/carts/:id/items/:itemId', authenticate, ensureTenantAccess, cartCon
  * @desc    Remover item do carrinho
  * @access  TENANT_ADMIN, ATTENDANT, CUSTOMER
  */
-router.delete('/carts/:id/items/:itemId', authenticate, ensureTenantAccess, cartController.removeItemFromCart);
+router.delete('/carts/:id/items/:itemId', authenticate, ensureTenantAccess, cartController.removeCartItem);
 
 /**
  * @route   POST /api/v1/carts/:id/apply-discount
