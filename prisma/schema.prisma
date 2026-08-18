@@ -1,6 +1,7 @@
 // Configuração do Prisma para o projeto DiixWhatsapp
 // Banco de dados: PostgreSQL
 // Modelo multi-tenant com isolamento lógico
+// Versão 2.0 - Com sistema completo de e-commerce, promoções e PIX
 
 generator client {
   provider = "prisma-client-js"
@@ -35,6 +36,77 @@ enum PlanType {
   ENTERPRISE
 }
 
+// Tipos de Chave PIX
+enum PixKeyType {
+  CPF
+  CNPJ
+  EMAIL
+  PHONE
+  RANDOM
+}
+
+// Tipos de Desconto
+enum DiscountType {
+  PERCENTAGE
+  FIXED
+}
+
+// Tipos de Campanha/Promoção
+enum CampaignType {
+  SITE_WIDE        // Toda a loja
+  CATEGORY         // Categoria específica
+  PRODUCT          // Produto específico
+  CUSTOMER_GROUP   // Grupo de clientes
+  CUSTOMER_INDIVIDUAL // Cliente específico
+}
+
+// Status do Pedido
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  REFUNDED
+}
+
+// Status do Pagamento
+enum PaymentStatus {
+  PENDING
+  PAID
+  PARTIALLY_PAID
+  REFUNDED
+  FAILED
+  CHARGEBACK
+}
+
+// Método de Pagamento
+enum PaymentMethod {
+  PIX
+  CREDIT_CARD
+  DEBIT_CARD
+  BOLETO
+  CASH
+  OTHER
+}
+
+// Tipo de Endereço
+enum AddressType {
+  RESIDENTIAL
+  COMMERCIAL
+  DELIVERY
+  BILLING
+}
+
+// Status do Carrinho
+enum CartStatus {
+  ACTIVE
+  ABANDONED
+  CONVERTED
+  EXPIRED
+}
+
 // Tenant (Loja/Empresa)
 model Tenant {
   id          String      @id @default(uuid())
@@ -58,6 +130,12 @@ model Tenant {
   configs     TenantConfig[]
   products    Product[]
   auditLogs   AuditLog[]
+  customers   Customer[]
+  carts       Cart[]
+  campaigns   Campaign[]
+  discounts   Discount[]
+  pixKeys     PixKey[]
+  addresses   Address[]
   
   @@index([slug])
   @@index([status])
@@ -155,31 +233,273 @@ model Conversation {
   @@index([stage])
 }
 
-// Pedidos/Vendas gerados pelo bot
+// Pedidos/Vendas gerados pelo bot - HISTÓRICO COMPLETO DE VENDAS
 model Order {
   id          String   @id @default(uuid())
   tenantId    String
   conversationId String
-  customerId  String
+  customerId  String?
   customerName String
   customerPhone String
+  customerEmail String?
   totalAmount Decimal  @db.Decimal(10, 2)
-  status      String   @default("pending") // pending, confirmed, processing, shipped, delivered, cancelled
-  items       Json     // Lista de itens do pedido
-  paymentMethod String?
-  paymentStatus String @default("pending") // pending, paid, refunded
+  subtotal    Decimal  @db.Decimal(10, 2)
+  discountAmount Decimal @db.Decimal(10, 2) @default(0)
+  shippingCost Decimal @db.Decimal(10, 2) @default(0)
+  status      OrderStatus @default(PENDING)
+  paymentMethod PaymentMethod?
+  paymentStatus PaymentStatus @default(PENDING)
+  pixKeyUsed  String?    // Chave PIX usada no pagamento
+  pixTxId     String?    // Transaction ID do PIX
   notes       String?
+  deliveredAt DateTime?
+  cancelledAt DateTime?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   
+  // Relacionamentos
   tenant      Tenant   @relation(fields: [tenantId], references: [id])
+  customer    Customer? @relation(fields: [customerId], references: [id])
+  items       OrderItem[]
+  discount    Discount? @relation(fields: [discountId], references: [id])
+  discountId  String?
+  shippingAddress Address? @relation("ShippingAddress", fields: [shippingAddressId], references: [id])
+  shippingAddressId String?
+  billingAddress Address? @relation("BillingAddress", fields: [billingAddressId], references: [id])
+  billingAddressId String?
   
   @@index([tenantId])
   @@index([status])
   @@index([createdAt])
+  @@index([customerId])
+  @@index([paymentStatus])
 }
 
-// Produtos/Catálogo por Tenant
+// Itens do Pedido
+model OrderItem {
+  id          String   @id @default(uuid())
+  orderId     String
+  productId   String
+  productName String
+  productSku  String?
+  quantity    Int
+  unitPrice   Decimal  @db.Decimal(10, 2)
+  totalPrice  Decimal  @db.Decimal(10, 2)
+  discountAmount Decimal @db.Decimal(10, 2) @default(0)
+  metadata    Json?    // Variações do produto, etc
+  createdAt   DateTime @default(now())
+  
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product     Product? @relation(fields: [productId], references: [id])
+  
+  @@index([orderId])
+  @@index([productId])
+}
+
+// Clientes/Customer - Histórico e Dados
+model Customer {
+  id          String   @id @default(uuid())
+  tenantId    String
+  name        String
+  phone       String
+  email       String?
+  document    String?  // CPF/CNPJ
+  tags        String[] // Tags para segmentação
+  notes       String?
+  totalSpent  Decimal  @db.Decimal(10, 2) @default(0)
+  totalOrders Int      @default(0)
+  lastPurchaseAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relacionamentos
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+  orders      Order[]
+  carts       Cart[]
+  addresses   Address[]
+  
+  @@unique([tenantId, phone])
+  @@index([tenantId])
+  @@index([email])
+  @@index([tags])
+}
+
+// Carrinho de Compras - Checkout
+model Cart {
+  id          String   @id @default(uuid())
+  tenantId    String
+  customerId  String?
+  sessionId   String   // Para carrinhos temporários (não logados)
+  status      CartStatus @default(ACTIVE)
+  subtotal    Decimal  @db.Decimal(10, 2) @default(0)
+  discountAmount Decimal @db.Decimal(10, 2) @default(0)
+  total       Decimal  @db.Decimal(10, 2) @default(0)
+  expiresAt   DateTime?
+  convertedToOrderId String?
+  metadata    Json?    // Dados adicionais
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relacionamentos
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+  customer    Customer? @relation(fields: [customerId], references: [id])
+  items       CartItem[]
+  appliedDiscount Discount? @relation(fields: [appliedDiscountId], references: [id])
+  appliedDiscountId String?
+  
+  @@index([tenantId])
+  @@index([customerId])
+  @@index([sessionId])
+  @@index([status])
+}
+
+// Itens do Carrinho
+model CartItem {
+  id          String   @id @default(uuid())
+  cartId      String
+  productId   String
+  quantity    Int
+  unitPrice   Decimal  @db.Decimal(10, 2)
+  totalPrice  Decimal  @db.Decimal(10, 2)
+  metadata    Json?    // Variações, observações
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  cart        Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product     Product  @relation(fields: [productId], references: [id])
+  
+  @@index([cartId])
+  @@index([productId])
+}
+
+// Endereços - Entrega e Cobrança
+model Address {
+  id          String   @id @default(uuid())
+  tenantId    String
+  customerId  String?  // Null se for endereço genérico do tenant
+  type        AddressType @default(RESIDENTIAL)
+  label       String?  // Apelido (Casa, Trabalho, etc)
+  street      String
+  number      String
+  complement  String?
+  neighborhood String
+  city        String
+  state       String
+  zipCode     String
+  country     String   @default("Brasil")
+  isDefault   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relacionamentos
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+  customer    Customer? @relation(fields: [customerId], references: [id])
+  shippingOrders Order[] @relation("ShippingAddress")
+  billingOrders Order[] @relation("BillingAddress")
+  
+  @@index([tenantId])
+  @@index([customerId])
+  @@index([type])
+  @@index([isDefault])
+}
+
+// Chaves PIX por Tenant
+model PixKey {
+  id          String   @id @default(uuid())
+  tenantId    String
+  keyType     PixKeyType
+  keyValue    String
+  bankName    String
+  bankCode    String?
+  accountHolder String
+  accountNumber String
+  agency      String
+  isDefault   Boolean  @default(false)
+  active      Boolean  @default(true)
+  qrCodeStatic String? // QR Code estático gerado
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relacionamentos
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+  
+  @@unique([tenantId, keyValue])
+  @@index([tenantId])
+  @@index([isDefault])
+  @@index([active])
+}
+
+// Campanhas e Promoções
+model Campaign {
+  id          String   @id @default(uuid())
+  tenantId    String
+  name        String
+  description String?
+  type        CampaignType
+  discountId  String
+  startDate   DateTime
+  endDate     DateTime
+  isActive    Boolean  @default(true)
+  usageLimit  Int?     // Limite total de usos
+  usageCount  Int      @default(0)
+  perCustomerLimit Int? // Limite por cliente
+  minPurchaseAmount Decimal? @db.Decimal(10, 2)
+  targetCategories String[] // Categorias alvo (se type=CATEGORY)
+  targetProducts String[]   // Produtos alvo (se type=PRODUCT)
+  targetCustomerGroups String[] // Grupos de clientes (tags)
+  targetCustomers String[] // Clientes específicos
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relacionamentos
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+  discount    Discount @relation(fields: [discountId], references: [id])
+  
+  @@index([tenantId])
+  @@index([type])
+  @@index([isActive])
+  @@index([startDate, endDate])
+}
+
+// Descontos e Cupons
+model Discount {
+  id          String   @id @default(uuid())
+  tenantId    String
+  code        String   // Código do cupom
+  description String?
+  type        DiscountType
+  value       Decimal  @db.Decimal(10, 2) // Valor ou porcentagem
+  minPurchaseAmount Decimal? @db.Decimal(10, 2)
+  maxDiscountAmount Decimal? @db.Decimal(10, 2)
+  usageLimit  Int?
+  usageCount  Int      @default(0)
+  perCustomerLimit Int? @default(1)
+  startDate   DateTime
+  endDate     DateTime
+  isActive    Boolean  @default(true)
+  applicableTo String @default("all") // all, specific_products, specific_categories
+  targetProducts String[] // IDs dos produtos
+  targetCategories String[] // IDs das categorias
+  targetCustomerGroups String[] // Tags de clientes
+  autoApply   Boolean  @default(false)
+  stackable   Boolean  @default(false) // Pode ser usado com outros
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relacionamentos
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+  campaigns   Campaign[]
+  orders      Order[]
+  carts       Cart[]
+  
+  @@unique([tenantId, code])
+  @@index([tenantId])
+  @@index([code])
+  @@index([isActive])
+  @@index([type])
+}
+
+// Produtos/Catálogo por Tenant - ATUALIZADO
 model Product {
   id          String   @id @default(uuid())
   tenantId    String
@@ -197,7 +517,10 @@ model Product {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   
+  // Relacionamentos
   tenant      Tenant   @relation(fields: [tenantId], references: [id])
+  orderItems  OrderItem[]
+  cartItems   CartItem[]
   
   @@index([tenantId])
   @@index([category])
