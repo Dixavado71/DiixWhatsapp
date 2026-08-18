@@ -11,8 +11,12 @@
   "scripts": {
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
-    "test": "jest --coverage",
-    "test:watch": "jest --watch",
+    "test": "jest --config=jest.config.cjs --coverage",
+    "test:unit": "jest --config=jest.config.cjs --testPathPattern='/(unit|models|middleware|services|config)/' --coverage",
+    "test:integration": "jest --config=jest.config.cjs --testPathPattern='/integration/' --coverage",
+    "test:e2e": "jest --config=jest.config.cjs --testPathPattern='/e2e/' --coverage",
+    "test:watch": "jest --config=jest.config.cjs --watch",
+    "test:coverage": "jest --config=jest.config.cjs --coverage --coverageReporters=text-summary --verbose",
     "lint": "eslint src/**/*.js",
     "lint:fix": "eslint src/**/*.js --fix",
     "db:migrate": "prisma migrate dev",
@@ -63,6 +67,7 @@
     "babel-jest": "^30.4.1",
     "eslint": "^10.8.1",
     "jest": "^30.4.2",
-    "nodemon": "^3.1.14"
+    "nodemon": "^3.1.14",
+    "supertest": "^7.2.2"
   }
 }
