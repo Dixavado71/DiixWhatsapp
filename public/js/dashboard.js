@@ -1,5 +1,6 @@
 // ===========================================
-// Dashboard Admin JavaScript
+// Dashboard Admin JavaScript - v2.1.0
+// Sistema completo de E-commerce e Vendas
 // ===========================================
 
 let currentUser = null;
@@ -19,6 +20,9 @@ document.addEventListener('DOMContentLoaded', async function() {
   
   // Load dashboard stats
   await loadDashboardStats();
+  
+  // Load e-commerce stats
+  await loadEcommerceStats();
   
   // Setup event listeners
   setupEventListeners();
@@ -343,6 +347,188 @@ async function deleteTenant(tenantId) {
 function editTenant(tenantId) {
   // TODO: Implement edit functionality
   showToast('Funcionalidade de edição em desenvolvimento', 'info');
+}
+
+// ===========================================
+// E-commerce Stats & Metrics
+// ===========================================
+
+async function loadEcommerceStats() {
+  try {
+    // Load sales metrics
+    await loadSalesMetrics();
+    
+    // Load abandoned carts
+    await loadAbandonedCarts();
+    
+    // Load campaign performance
+    await loadCampaignPerformance();
+  } catch (error) {
+    console.error('Error loading e-commerce stats:', error);
+  }
+}
+
+async function loadSalesMetrics() {
+  try {
+    const response = await DiixAPI.get('/orders/stats');
+    const stats = response.data;
+    
+    // Update sales cards
+    document.getElementById('totalOrders').textContent = stats.totalOrders || 0;
+    document.getElementById('totalRevenue').textContent = formatCurrency(stats.totalRevenue || 0);
+    
+    // Update orders by status chart/cards
+    updateOrdersByStatus(stats.ordersByStatus || {});
+    
+    // Update payment status
+    updatePaymentStatus(stats.ordersByPaymentStatus || {});
+  } catch (error) {
+    console.error('Error loading sales metrics:', error);
+  }
+}
+
+async function loadAbandonedCarts() {
+  try {
+    const response = await DiixAPI.get('/carts?status=ABANDONED&limit=5');
+    const carts = response.data.data || [];
+    
+    const container = document.getElementById('abandonedCartsList');
+    if (container) {
+      if (carts.length === 0) {
+        container.innerHTML = '<p class="text-center text-muted">Nenhum carrinho abandonado</p>';
+      } else {
+        container.innerHTML = carts.map(cart => `
+          <div class="cart-item">
+            <div class="cart-info">
+              <strong>${cart.customer?.name || 'Cliente não identificado'}</strong>
+              <small>${formatDate(cart.createdAt)}</small>
+            </div>
+            <div class="cart-value">${formatCurrency(cart.total)}</div>
+          </div>
+        `).join('');
+      }
+    }
+    
+    // Update abandoned carts count
+    const abandonedCount = carts.length;
+    const abandonedElement = document.getElementById('abandonedCartsCount');
+    if (abandonedElement) {
+      abandonedElement.textContent = abandonedCount;
+    }
+  } catch (error) {
+    console.error('Error loading abandoned carts:', error);
+  }
+}
+
+async function loadCampaignPerformance() {
+  try {
+    const response = await DiixAPI.get('/campaigns');
+    const campaigns = response.data.data || [];
+    
+    const container = document.getElementById('campaignPerformanceList');
+    if (container) {
+      if (campaigns.length === 0) {
+        container.innerHTML = '<p class="text-center text-muted">Nenhuma campanha ativa</p>';
+      } else {
+        container.innerHTML = campaigns.slice(0, 5).map(campaign => `
+          <div class="campaign-item">
+            <div class="campaign-info">
+              <strong>${campaign.name}</strong>
+              <small>${campaign.isActive ? '<span class="badge badge-success">Ativa</span>' : '<span class="badge badge-danger">Inativa</span>'}</small>
+            </div>
+            <div class="campaign-stats">
+              <span>Usos: ${campaign.usageCount}/${campaign.usageLimit || '∞'}</span>
+            </div>
+          </div>
+        `).join('');
+      }
+    }
+    
+    // Calculate total campaign revenue
+    const activeCampaigns = campaigns.filter(c => c.isActive).length;
+    const totalUses = campaigns.reduce((sum, c) => sum + (c.usageCount || 0), 0);
+    
+    document.getElementById('activeCampaignsCount').textContent = activeCampaigns;
+    document.getElementById('totalCampaignUses').textContent = totalUses;
+  } catch (error) {
+    console.error('Error loading campaign performance:', error);
+  }
+}
+
+function updateOrdersByStatus(ordersByStatus) {
+  const container = document.getElementById('ordersByStatusChart');
+  if (container) {
+    const statusLabels = {
+      'PENDING': 'Pendentes',
+      'CONFIRMED': 'Confirmados',
+      'PROCESSING': 'Em Processamento',
+      'SHIPPED': 'Enviados',
+      'DELIVERED': 'Entregues',
+      'CANCELLED': 'Cancelados',
+      'REFUNDED': 'Reembolsados'
+    };
+    
+    const statusColors = {
+      'PENDING': '#f6ad55',
+      'CONFIRMED': '#4299e1',
+      'PROCESSING': '#ed8936',
+      'SHIPPED': '#4299e1',
+      'DELIVERED': '#48bb78',
+      'CANCELLED': '#f56565',
+      'REFUNDED': '#9f7aea'
+    };
+    
+    let html = '<div class="status-charts">';
+    for (const [status, count] of Object.entries(ordersByStatus)) {
+      if (count > 0) {
+        html += `
+          <div class="status-badge" style="background-color: ${statusColors[status] || '#ccc'}20; border-left: 3px solid ${statusColors[status] || '#ccc'};">
+            <span class="status-label">${statusLabels[status] || status}</span>
+            <span class="status-count">${count}</span>
+          </div>
+        `;
+      }
+    }
+    html += '</div>';
+    container.innerHTML = html;
+  }
+}
+
+function updatePaymentStatus(paymentStatus) {
+  const container = document.getElementById('paymentStatusChart');
+  if (container) {
+    const statusLabels = {
+      'PENDING': 'Pendentes',
+      'PAID': 'Pagos',
+      'PARTIALLY_PAID': 'Parcialmente Pagos',
+      'REFUNDED': 'Reembolsados',
+      'FAILED': 'Falharam',
+      'CHARGEBACK': 'Chargebacks'
+    };
+    
+    const statusColors = {
+      'PENDING': '#f6ad55',
+      'PAID': '#48bb78',
+      'PARTIALLY_PAID': '#ecc94b',
+      'REFUNDED': '#9f7aea',
+      'FAILED': '#f56565',
+      'CHARGEBACK': '#e53e3e'
+    };
+    
+    let html = '<div class="status-charts">';
+    for (const [status, count] of Object.entries(paymentStatus)) {
+      if (count > 0) {
+        html += `
+          <div class="status-badge" style="background-color: ${statusColors[status] || '#ccc'}20; border-left: 3px solid ${statusColors[status] || '#ccc'};">
+            <span class="status-label">${statusLabels[status] || status}</span>
+            <span class="status-count">${count}</span>
+          </div>
+        `;
+      }
+    }
+    html += '</div>';
+    container.innerHTML = html;
+  }
 }
 
 // ===========================================
