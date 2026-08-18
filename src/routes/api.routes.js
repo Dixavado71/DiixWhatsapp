@@ -10,6 +10,7 @@ import { discountController } from '../controllers/discount.controller.js';
 import { campaignController } from '../controllers/campaign.controller.js';
 import { pixKeyController } from '../controllers/pixKey.controller.js';
 import { addressController } from '../controllers/address.controller.js';
+import { whatsappBotController } from '../controllers/whatsappBot.controller.js';
 
 const router = Router();
 
@@ -644,5 +645,16 @@ router.post('/addresses/:id/set-default', authenticate, ensureTenantAccess, addr
  * @access  TENANT_ADMIN, ATTENDANT, CUSTOMER
  */
 router.post('/addresses/validate-zip', authenticate, ensureTenantAccess, addressController.validateZipCode);
+
+// ===========================================
+// Rotas do Bot WhatsApp (Evolution API)
+// ===========================================
+
+/**
+ * @route   POST /api/v1/whatsapp/webhook/:tenantId
+ * @desc    Webhook para receber mensagens da Evolution API
+ * @access  Público (requer validação de assinatura em produção)
+ */
+router.post('/whatsapp/webhook/:tenantId', whatsappBotController.receiveWebhook);
 
 export default router;

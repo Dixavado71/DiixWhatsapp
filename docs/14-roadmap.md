@@ -5,7 +5,7 @@
 Este documento descreve o plano de desenvolvimento do **DiixWhatsapp** dividido em fases temporais com funcionalidades, melhorias e marcos definidos.
 
 **Última Atualização**: Janeiro 2025  
-**Versão do Roadmap**: 2.1.0 - E-commerce Completo + PIX + Promoções
+**Versão do Roadmap**: 2.1.0 - E-commerce Completo + Bot WhatsApp Funcional
 
 ```
 2025
@@ -18,20 +18,21 @@ Este documento descreve o plano de desenvolvimento do **DiixWhatsapp** dividido 
 │                      ├─ Swagger UI/OpenAPI ✅
 │                      └─ Autenticação JWT ✅
 │
-├── Q1.5 (Fev) ────────┬─ E-commerce v2.1.0 ✅ COMPLETO AGORA
+├── Q1.5 (Fev) ────────┬─ E-commerce v2.1.0 ✅ COMPLETO
 │                      ├─ Histórico de Vendas ✅
 │                      ├─ Carrinho & Checkout ✅
 │                      ├─ Sistema de Clientes ✅
 │                      ├─ Endereços de Entrega ✅
 │                      ├─ Chaves PIX Múltiplas ✅
 │                      ├─ Descontos e Cupons ✅
-│                      └─ Campanhas Promocionais ✅
+│                      ├─ Campanhas Promocionais ✅
+│                      └─ Bot WhatsApp 100% Funcional ✅
 │
 ├── Q2 (Abr-Jun) ──────┬─ Expansão & Features 🔄 EM ANDAMENTO
-│                      ├─ Integração Pagamentos ✅
-│                      ├─ Bot Vendas Completo (90%)
 │                      ├─ Testes Avançados
-│                      └─ Relatórios Analytics
+│                      ├─ Relatórios Analytics
+│                      ├─ Recuperação de Carrinhos
+│                      └─ Melhorias de Performance
 │
 ├── Q3 (Jul-Set) ──────┬─ Inteligência & Escala 📋 PLANEJADO
 │                      ├─ IA/NLP
