@@ -1,0 +1,184 @@
+// Configuração do Prisma para o projeto DiixWhatsapp
+// Banco de dados: PostgreSQL
+// Modelo multi-tenant com isolamento lógico
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Tenant (Loja/Empresa)
+model Tenant {
+  id          String   @id @default(uuid())
+  name        String
+  slug        String   @unique
+  email       String
+  phone       String?
+  plan        String   @default("basic") // basic, pro, enterprise
+  status      String   @default("active") // active, suspended, inactive
+  maxAccounts Int      @default(5)
+  maxMessages Int      @default(1000)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relacionamentos
+  accounts    WhatsAppAccount[]
+  users       User[]
+  conversations Conversation[]
+  orders      Order[]
+  configs     TenantConfig[]
+  
+  @@index([slug])
+  @@index([status])
+}
+
+// Usuários do sistema (administradores de cada tenant)
+model User {
+  id        String   @id @default(uuid())
+  tenantId  String
+  email     String
+  password  String
+  name      String
+  role      String   @default("user") // admin, user, viewer
+  status    String   @default("active")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  tenant    Tenant   @relation(fields: [tenantId], references: [id])
+  
+  @@unique([tenantId, email])
+  @@index([tenantId])
+}
+
+// Contas WhatsApp vinculadas a cada tenant
+model WhatsAppAccount {
+  id              String   @id @default(uuid())
+  tenantId        String
+  name            String
+  instanceId      String   @unique // ID da instância na Evolution API
+  phoneNumber     String
+  status          String   @default("pending") // pending, connected, disconnected
+  webhookUrl      String?
+  apiKey          String?
+  qrcode          String?
+  lastConnection  DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  tenant          Tenant   @relation(fields: [tenantId], references: [id])
+  messages        Message[]
+  
+  @@unique([tenantId, instanceId])
+  @@index([tenantId])
+  @@index([status])
+}
+
+// Mensagens enviadas/recebidas
+model Message {
+  id              String   @id @default(uuid())
+  tenantId        String
+  accountId       String
+  direction       String   // inbound, outbound
+  fromNumber      String
+  toNumber        String
+  content         String
+  messageType     String   @default("text") // text, image, video, audio, document, location, contact
+  status          String   @default("pending") // pending, sent, delivered, read, failed
+  metadata        Json?    // Dados adicionais (URLs de mídia, etc)
+  conversationId  String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  account         WhatsAppAccount @relation(fields: [accountId], references: [id])
+  conversation    Conversation?   @relation(fields: [conversationId], references: [id])
+  
+  @@index([tenantId])
+  @@index([accountId])
+  @@index([conversationId])
+  @@index([createdAt])
+}
+
+// Conversas (sessões de atendimento)
+model Conversation {
+  id          String   @id @default(uuid())
+  tenantId    String
+  accountId   String
+  contactNumber String
+  contactName String?
+  status      String   @default("open") // open, closed, pending
+  stage       String   @default("initial") // initial, qualification, proposal, negotiation, closed
+  assignedTo  String?  // ID do usuário responsável
+  metadata    Json?    // Dados da conversa (tags, informações do cliente, etc)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+  messages    Message[]
+  
+  @@index([tenantId])
+  @@index([accountId])
+  @@index([status])
+  @@index([stage])
+}
+
+// Pedidos/Vendas gerados pelo bot
+model Order {
+  id          String   @id @default(uuid())
+  tenantId    String
+  conversationId String
+  customerId  String
+  customerName String
+  customerPhone String
+  totalAmount Decimal  @db.Decimal(10, 2)
+  status      String   @default("pending") // pending, confirmed, processing, shipped, delivered, cancelled
+  items       Json     // Lista de itens do pedido
+  paymentMethod String?
+  paymentStatus String @default("pending") // pending, paid, refunded
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+  
+  @@index([tenantId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+// Configurações do tenant
+model TenantConfig {
+  id          String   @id @default(uuid())
+  tenantId    String
+  key         String
+  value       Json
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+  
+  @@unique([tenantId, key])
+  @@index([tenantId])
+}
+
+// Logs de auditoria
+model AuditLog {
+  id          String   @id @default(uuid())
+  tenantId    String?
+  userId      String?
+  action      String
+  resource    String
+  resourceId  String?
+  details     Json?
+  ipAddress   String?
+  userAgent   String?
+  createdAt   DateTime @default(now())
+  
+  @@index([tenantId])
+  @@index([action])
+  @@index([createdAt])
+}
