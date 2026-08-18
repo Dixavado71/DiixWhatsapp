@@ -2,6 +2,8 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import config from './config/index.js';
 
 // Rotas da API
@@ -9,6 +11,9 @@ import apiRoutes from './routes/api.routes.js';
 
 // Middlewares
 import { identifyTenant, checkTenantLimits } from './middleware/tenant.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 
@@ -33,6 +38,17 @@ if (config.nodeEnv === 'development') {
   app.use(morgan('combined'));
 }
 
+// ===========================================
+// Configuração do EJS para Views
+// ===========================================
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, '../views'));
+
+// ===========================================
+// Arquivos Estáticos
+// ===========================================
+app.use('/public', express.static(path.join(__dirname, '../public')));
+
 // Health check
 app.get('/health', (req, res) => {
   res.status(200).json({
@@ -55,6 +71,23 @@ app.get('/api', (req, res) => {
       api: '/api/v1',
       webhook: '/webhook',
     },
+  });
+});
+
+// ===========================================
+// Rotas de Páginas (Views EJS)
+// ===========================================
+app.get('/', (req, res) => {
+  res.render('index', {
+    title: 'DiixWhatsapp API',
+    year: new Date().getFullYear()
+  });
+});
+
+app.get('/docs', (req, res) => {
+  res.render('documentation', {
+    title: 'Documentação da API',
+    year: new Date().getFullYear()
   });
 });
 

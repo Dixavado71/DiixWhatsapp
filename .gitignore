@@ -1,23 +1,25 @@
 ```
 # Dependencies
 node_modules/
+.prisma/
 
-# Build artifacts
-dist/
-build/
-public/assets/
+# Logs and temp files
+*.log
+*.tmp
 
 # Environment
 .env
 .env.local
-.env.*
+*.env.*
 
 # Editors
 .vscode/
 .idea/
 
-# Logs
-*.log
+# Build outputs
+dist/
+build/
+target/
 
 # Python
 __pycache__/
@@ -25,9 +27,10 @@ __pycache__/
 *.pyo
 *.pyd
 
-# Temporary files
-*.tmp
-*.swp
+# Database
+*.db
+*.sqlite
+*.sqlite3
 
 # OS generated files
 .DS_Store
