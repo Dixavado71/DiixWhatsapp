@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { Decimal } from '@prisma/client/runtime/library.js';
 
 const prisma = new PrismaClient();
 
@@ -886,6 +887,3 @@ export const cartController = {
     });
   },
 };
-
-// Import Decimal do Prisma
-const { Decimal } = require('@prisma/client/runtime/library');
