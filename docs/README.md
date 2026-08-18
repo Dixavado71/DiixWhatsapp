@@ -19,11 +19,12 @@ Comece por aqui se você está conhecendo o projeto agora:
 Documentação técnica para desenvolvimento:
 1. [🏗️ Arquitetura do Sistema](./02-arquitetura.md) - Diagramas e fluxos técnicos
 2. [🗄️ Bancos de Dados & Redis](./04-banco-dados-redis.md) ⭐ - PostgreSQL, MongoDB e Redis
-3. [🎨 Frontend Vue 3](./24-frontend.md) ⭐ NOVO - Painel admin com tema Dark Cyber
-4. [📝 Padrões de Código](./11-padroes-codigo.md) - Boas práticas e convenções
-5. [🔌 API Reference](./12-api-reference.md) - Documentação completa da API
-6. [🧪 Estratégia de Testes](./13-testes.md) - Como testar o código
-7. [📁 Estrutura de Arquivos](./17-estrutura-arquivos.md) - Organização do código
+3. [🌐 Dashboard EJS](./DASHBOARD_ADMIN.md) ⭐ NOVO - Dashboard admin com EJS
+4. [📚 Documentação API com Swagger](./API_EJS_SETUP.md) ⭐ NOVO - Swagger UI e OpenAPI
+5. [📝 Padrões de Código](./11-padroes-codigo.md) - Boas práticas e convenções
+6. [🔌 API Reference](./12-api-reference.md) - Documentação completa da API
+7. [🧪 Estratégia de Testes](./13-testes.md) - Como testar o código
+8. [📁 Estrutura de Arquivos](./17-estrutura-arquivos.md) - Organização do código
 
 ### 🔧 Sou Administrador/Configurador
 Guias para configuração e deploy:
@@ -31,9 +32,11 @@ Guias para configuração e deploy:
 2. [🗄️ Bancos de Dados & Redis](./04-banco-dados-redis.md) ⭐ - Escolha e configuração de DBs
 3. [🏢 Guia Multi-Tenant](./03-multi-tenant.md) - Configuração de tenants e lojas
 4. [🔗 Evolution API](./07-evolution-api.md) - Integração com WhatsApp
-5. [📦 Deploy em Produção](./17-deploy.md) - Guia completo de deploy
-6. [🔍 Monitoramento](./18-monitoramento.md) - Logs, métricas e alertas
-7. [🔧 Troubleshooting](./19-troubleshooting.md) - Solução de problemas comuns
+5. [🌐 Dashboard Admin](./DASHBOARD_ADMIN.md) - Uso do painel administrativo
+6. [📚 Swagger UI](./API_EJS_SETUP.md) - Documentação interativa da API
+7. [📦 Deploy em Produção](./17-deploy.md) - Guia completo de deploy
+8. [🔍 Monitoramento](./18-monitoramento.md) - Logs, métricas e alertas
+9. [🔧 Troubleshooting](./19-troubleshooting.md) - Solução de problemas comuns
 
 ### 💼 Sou Operador de Atendimento
 Documentação operacional:
@@ -67,6 +70,13 @@ Informações de alto nível sobre o projeto:
 | [05-instalacao.md](./05-instalacao.md) | Guia passo a passo de instalação detalhada | 🔄 Em revisão |
 | [06-configuracao-ambiente.md](./06-configuracao-ambiente.md) | Configuração de variáveis de ambiente e secrets | 🔄 Em revisão |
 | [07-evolution-api.md](./07-evolution-api.md) | Integração e configuração da Evolution API | 🔄 Em revisão |
+
+### 🌐 Frontend & Dashboard (EJS) ⭐ NOVO
+| Documento | Descrição | Status |
+|-----------|-----------|--------|
+| [DASHBOARD_ADMIN.md](./DASHBOARD_ADMIN.md) | Dashboard administrativo com EJS + JWT | ✅ Completo |
+| [API_EJS_SETUP.md](./API_EJS_SETUP.md) | Swagger UI e documentação OpenAPI | ✅ Completo |
+| [BACKEND_ONLY.md](../BACKEND_ONLY.md) | Backend puro sem frontend Vue.js | ✅ Completo |
 
 ### 🤖 Processos e Fluxos Operacionais
 | Documento | Descrição | Status |
@@ -106,7 +116,37 @@ Informações de alto nível sobre o projeto:
 
 ---
 
-## 🆕 Novidades na Versão 1.1.0
+## 🆕 Novidades na Versão 2.0.0 - Backend + Dashboard EJS
+
+### Principais Atualizações
+- ✅ **Backend Completo**: API REST multi-tenant totalmente funcional
+- ✅ **Dashboard Admin EJS**: Interface administrativa moderna com autenticação JWT
+- ✅ **Swagger UI Integrado**: Documentação interativa OpenAPI 3.0
+- ✅ **Páginas EJS**: Landing page, documentação, login e dashboard
+- ✅ **JavaScript Client**: API client no navegador para testes rápidos
+- ✅ **CI/CD Atualizado**: GitHub Actions corrigido para Node.js 22.x
+
+### Novos Documentos
+- 📄 [DASHBOARD_ADMIN.md](./DASHBOARD_ADMIN.md) ⭐ - Guia completo do dashboard admin
+- 📄 [API_EJS_SETUP.md](./API_EJS_SETUP.md) ⭐ - Swagger UI e documentação OpenAPI
+- 📄 [BACKEND_ONLY.md](../BACKEND_ONLY.md) ⭐ - Backend puro sem frontend Vue.js
+
+### Melhorias na Infraestrutura
+- 🔧 **EJS View Engine**: Template engine configurado no Express
+- 🔧 **Assets Estáticos**: CSS e JavaScript organizados em `/public`
+- 🔧 **Autenticação JWT**: Login seguro com tokens persistentes
+- 🔧 **Multi-Tenant**: Controle total via dashboard administrativo
+- 🔧 **Testes Corrigidos**: Jest configurado para ES Modules
+
+### Frontend Removido
+- ❌ Vue.js 3 removido (backend-only focus)
+- ❌ Vuetify removido
+- ❌ Build de frontend removido do package.json
+- ✅ **Substituído por**: EJS + Vanilla JS + CSS moderno
+
+---
+
+## 🆕 Novidades na Versão 1.1.0 (Legado)
 
 ### Principais Atualizações
 - ✅ **Suporte a Múltiplos Bancos de Dados**: Escolha entre PostgreSQL e MongoDB conforme sua necessidade
@@ -116,12 +156,12 @@ Informações de alto nível sobre o projeto:
 - ✅ **Graceful Shutdown Melhorado**: Encerramento seguro de todas as conexões (DB, Redis, Express)
 - ✅ **Health Checks**: Monitoramento contínuo de saúde de todas as conexões
 
-### Novos Documentos
+### Novos Documentos (v1.1.0)
 - 📄 [04-banco-dados-redis.md](./04-banco-dados-redis.md) - Guia completo de bancos de dados e Redis
 - 📄 [16-status-instalacao.md](./16-status-instalacao.md) - Status detalhado da instalação
 - 📄 [17-estrutura-arquivos.md](./17-estrutura-arquivos.md) - Estrutura completa do projeto
 
-### Melhorias na Infraestrutura
+### Melhorias na Infraestrutura (v1.1.0)
 - 🔧 Conexão dinâmica de banco de dados baseada em `DB_PROVIDER`
 - 🔧 Retry lógico exponencial para conexões falhas
 - 🔧 Singleton pattern para Redis e Database connections
@@ -187,9 +227,9 @@ Encontrou erros ou tem sugestões de melhoria?
 
 <div align="center">
 
-**Última atualização**: Dezembro 2024  
-**Versão da documentação**: 1.1.0  
-**Projeto**: DiixWhatsapp v1.0.0-alpha  
+**Última atualização**: Janeiro 2025  
+**Versão da documentação**: 2.0.0  
+**Projeto**: DiixWhatsapp v2.0.0 - Backend + Dashboard EJS  
 
 [⬆ Voltar ao topo](#documentação-diixwhatsapp)
 
