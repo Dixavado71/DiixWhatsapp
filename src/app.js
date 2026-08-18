@@ -13,6 +13,8 @@ import apiRoutes from './routes/api.routes.js';
 
 // Middlewares
 import { identifyTenant, checkTenantLimits } from './middleware/tenant.js';
+import { createTenantRateLimiter, createStrictRateLimiter } from './middleware/rateLimit.js';
+import { requestLogger } from './config/logger.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -168,16 +170,30 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
 }));
 
 // ===========================================
+// Rotas de Health Check e Monitoramento
+// ===========================================
+import { healthLive, healthReady, healthMetrics, healthStatus } from './controllers/health.controller.js';
+
+app.get('/health/live', healthLive);
+app.get('/health/ready', healthReady);
+app.get('/health/metrics', healthMetrics);
+app.get('/health/status', healthStatus);
+
+// ===========================================
 // Rotas da API v1
 // ===========================================
+
+// Aplicar rate limiting dinâmico por tenant
+app.use('/api/v1', createTenantRateLimiter());
+
+// Aplicar logger estruturado de requisições
+app.use('/api/v1', requestLogger);
+
+// Aplicar rate limiting estrito para rotas de autenticação
+app.use('/api/v1/auth/login', createStrictRateLimiter());
+app.use('/api/v1/auth/register', createStrictRateLimiter());
+
 app.use('/api/v1', apiRoutes);
-
-// Middleware de identificação do tenant (aplicado nas rotas da API)
-// app.use('/api/v1', identifyTenant);
-// app.use('/api/v1', checkTenantLimits);
-
-// Webhook da Evolution API
-// app.post('/webhook', webhookController.handle);
 
 // 404 Handler (apenas para APIs)
 app.use((req, res) => {
