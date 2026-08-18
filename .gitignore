@@ -1,5 +1,38 @@
-(docs/DASHBOARD_ADMIN.md and .github/workflows/ci-cd.yml are source/config files, no build artifacts, dependencies, or temp files in the changes)
+```
+# Coverage reports
+coverage/
+*.info
 
-```markdown
+# Build artifacts
+dist/
+build/
+target/
 
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+.env.local
+.env.*
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*.tmp
+
+# Logs
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Test coverage artifacts
+lcov-report/
 ```

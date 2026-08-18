@@ -19,14 +19,23 @@ module.exports = {
   },
   testMatch: ['**/tests/backend/**/*.test.js'],
   moduleFileExtensions: ['js', 'json'],
-  transform: {},
+  // Configurar Babel para transformar ES6 modules
+  transform: {
+    '^.+\\.jsx?$': ['babel-jest', {
+      presets: [
+        ['@babel/preset-env', {
+          targets: { node: 'current' }
+        }]
+      ]
+    }]
+  },
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1'
   },
   setupFilesAfterEnv: ['<rootDir>/tests/setup.js'],
   testTimeout: 30000,
-  forceExit: true,
-  detectOpenHandles: true,
+  forceExit: false,
+  detectOpenHandles: false,
   clearMocks: true,
   resetMocks: true,
   restoreMocks: true
