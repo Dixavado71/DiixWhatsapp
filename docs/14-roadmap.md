@@ -5,7 +5,7 @@
 Este documento descreve o plano de desenvolvimento do **DiixWhatsapp** dividido em fases temporais com funcionalidades, melhorias e marcos definidos.
 
 **Última Atualização**: Janeiro 2025  
-**Versão do Roadmap**: 2.0.0 - Backend + Dashboard EJS
+**Versão do Roadmap**: 2.1.0 - E-commerce Completo + PIX + Promoções
 
 ```
 2025
@@ -18,8 +18,18 @@ Este documento descreve o plano de desenvolvimento do **DiixWhatsapp** dividido 
 │                      ├─ Swagger UI/OpenAPI ✅
 │                      └─ Autenticação JWT ✅
 │
+├── Q1.5 (Fev) ────────┬─ E-commerce v2.1.0 ✅ COMPLETO AGORA
+│                      ├─ Histórico de Vendas ✅
+│                      ├─ Carrinho & Checkout ✅
+│                      ├─ Sistema de Clientes ✅
+│                      ├─ Endereços de Entrega ✅
+│                      ├─ Chaves PIX Múltiplas ✅
+│                      ├─ Descontos e Cupons ✅
+│                      └─ Campanhas Promocionais ✅
+│
 ├── Q2 (Abr-Jun) ──────┬─ Expansão & Features 🔄 EM ANDAMENTO
-│                      ├─ Bot Vendas Completo (70%)
+│                      ├─ Integração Pagamentos ✅
+│                      ├─ Bot Vendas Completo (90%)
 │                      ├─ Testes Avançados
 │                      └─ Relatórios Analytics
 │
@@ -77,12 +87,84 @@ Este documento descreve o plano de desenvolvimento do **DiixWhatsapp** dividido 
 - ✅ Produção ready
 - ✅ Versão 2.0.0 lançada
 
-### Métricas de Sucesso Q1 - ATINGIDAS
-- ✅ Backend 100% funcional
-- ✅ Dashboard operacional
-- ✅ Swagger UI integrado
-- ✅ Documentação completa
-- ✅ CI/CD passando
+---
+
+## 📍 Fase 1.5: E-commerce Completo (Fev 2025) - ✅ COMPLETA v2.1.0
+
+**Período**: Fevereiro 2025  
+**Status**: ✅ **COMPLETO** (100%)  
+**Tema**: Sistema completo de vendas, carrinho, checkout, PIX e promoções
+
+### Objetivos - CONCLUÍDOS
+- [x] Histórico completo de vendas (Orders + OrderItems)
+- [x] Sistema de clientes (Customer)
+- [x] Carrinho de compras (Cart + CartItem)
+- [x] Endereços de entrega e cobrança (Address)
+- [x] Múltiplas chaves PIX por tenant (PixKey)
+- [x] Sistema de descontos e cupons (Discount)
+- [x] Campanhas promocionais segmentadas (Campaign)
+- [x] Schema do banco atualizado (v2.1.0)
+- [x] Documentação de e-commerce criada
+
+### Entregáveis - REALIZADOS
+
+#### Schema do Banco de Dados ✅
+- ✅ 8 novos modelos adicionados
+- ✅ 7 novos enums para status e tipos
+- ✅ Relacionamentos completos entre entidades
+- ✅ Índices otimizados para performance
+- ✅ Multi-tenant em todas as entidades
+
+#### Funcionalidades de Venda ✅
+- ✅ Pedidos com status detalhados (OrderStatus)
+- ✅ Status de pagamento (PaymentStatus)
+- ✅ Métodos de pagamento múltiplos (PaymentMethod)
+- ✅ Itens de pedido individualizados (OrderItem)
+- ✅ Histórico completo de compras por cliente
+
+#### Carrinho & Checkout ✅
+- ✅ Carrinho persistente (Cart)
+- ✅ Itens no carrinho (CartItem)
+- ✅ Status do carrinho (ACTIVE, ABANDONED, CONVERTED, EXPIRED)
+- ✅ SessionId para carrinhos temporários
+- ✅ Conversão carrinho → pedido
+
+#### Clientes & Endereços ✅
+- ✅ Cadastro completo de clientes (Customer)
+- ✅ Tags para segmentação
+- ✅ Total gasto e total de pedidos
+- ✅ Múltiplos endereços (Address)
+- ✅ Tipos: RESIDENTIAL, COMMERCIAL, DELIVERY, BILLING
+- ✅ Endereço padrão e apelidos
+
+#### Pagamentos PIX ✅
+- ✅ Múltiplas chaves PIX por tenant (PixKey)
+- ✅ Tipos: CPF, CNPJ, EMAIL, PHONE, RANDOM
+- ✅ Chave padrão e status ativo/inativo
+- ✅ QR Code estático gerado
+- ✅ Dados bancários completos
+
+#### Descontos & Promoções ✅
+- ✅ Cupons de desconto (Discount)
+- ✅ Tipos: PERCENTAGE, FIXED
+- ✅ Limites de uso (total e por cliente)
+- ✅ Segmentação por produto/categoria/cliente
+- ✅ Auto-aplicável e acumulável
+- ✅ Período de validade
+
+#### Campanhas de Marketing ✅
+- ✅ Campanhas promocionais (Campaign)
+- ✅ Tipos: SITE_WIDE, CATEGORY, PRODUCT, CUSTOMER_GROUP, CUSTOMER_INDIVIDUAL
+- ✅ Segmentação avançada
+- ✅ Controle de usos e limites
+- ✅ Vinculação com descontos
+
+### Métricas de Sucesso Q1.5 - ATINGIDAS
+- ✅ Schema 100% implementado
+- ✅ Prisma Client gerado com sucesso
+- ✅ Documentação completa criada
+- ✅ Roadmap atualizado
+- ✅ Pronto para implementação dos controllers
 
 ---
 
