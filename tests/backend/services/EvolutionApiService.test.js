@@ -29,8 +29,7 @@ describe('EvolutionApiService', () => {
     mockAxios.create.mockReturnValue(mockClient);
     
     // Re-importar o serviço após o mock
-    service = await import('../../src/services/EvolutionApiService.js');
-    service = service.default;
+    service = EvolutionApiService;
   });
 
   describe('createInstance', () => {

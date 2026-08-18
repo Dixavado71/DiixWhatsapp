@@ -1,1 +1,38 @@
-(docs/API_EJS_SETUP.md, public/js/api-test.js, src/app.js, views/documentation.ejs)
+```
+# Coverage reports
+coverage/
+*.info
+
+# Build artifacts
+dist/
+build/
+target/
+
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+.env.local
+.env.*
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*.tmp
+
+# Logs
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Test coverage artifacts
+lcov-report/
+```

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> - Login Admin</title>
+  <link rel="stylesheet" href="/public/css/style.css">
+  <link rel="stylesheet" href="/public/css/dashboard.css">
+</head>
+<body class="login-page">
+  <div class="login-container">
+    <div class="login-box">
+      <div class="login-header">
+        <h1>🔐 DiixWhatsapp Admin</h1>
+        <p>Faça login para acessar o painel de controle</p>
+      </div>
+
+      <form id="loginForm" class="login-form">
+        <div class="form-group">
+          <label for="email">E-mail</label>
+          <input 
+            type="email" 
+            id="email" 
+            name="email" 
+            placeholder="admin@diixwhatsapp.com" 
+            required
+            autocomplete="email"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="password">Senha</label>
+          <input 
+            type="password" 
+            id="password" 
+            name="password" 
+            placeholder="••••••••" 
+            required
+            autocomplete="current-password"
+          >
+        </div>
+
+        <div class="form-options">
+          <label class="checkbox-label">
+            <input type="checkbox" id="remember" name="remember">
+            <span>Lembrar-me</span>
+          </label>
+        </div>
+
+        <div id="errorMessage" class="error-message" style="display: none;"></div>
+
+        <button type="submit" class="btn btn-primary btn-full" id="loginBtn">
+          <span class="btn-text">Entrar</span>
+          <span class="btn-loading" style="display: none;">Autenticando...</span>
+        </button>
+      </form>
+
+      <div class="login-footer">
+        <p>Não tem uma conta? <a href="/">Voltar para Home</a></p>
+        <p><a href="/docs">Ver Documentação da API</a></p>
+      </div>
+
+      <div class="demo-credentials">
+        <p><strong>Credenciais de Teste:</strong></p>
+        <p><code>admin@diixwhatsapp.com</code> / <code>admin123</code></p>
+      </div>
+    </div>
+  </div>
+
+  <script src="/public/js/api-test.js"></script>
+  <script src="/public/js/login.js"></script>
+</body>
+</html>
