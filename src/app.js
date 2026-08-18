@@ -130,6 +130,22 @@ app.get('/', (req, res) => {
   });
 });
 
+// Rota de Login
+app.get('/login', (req, res) => {
+  res.render('login', {
+    title: 'Login Admin',
+    year: new Date().getFullYear()
+  });
+});
+
+// Rota do Dashboard Admin
+app.get('/dashboard', (req, res) => {
+  res.render('dashboard', {
+    title: 'Dashboard Admin',
+    year: new Date().getFullYear()
+  });
+});
+
 // Rota para documentação Swagger UI integrada
 app.get('/docs', (req, res) => {
   res.render('documentation', {

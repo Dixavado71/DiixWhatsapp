@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> - Dashboard Admin</title>
+  <link rel="stylesheet" href="/public/css/style.css">
+  <link rel="stylesheet" href="/public/css/dashboard.css">
+</head>
+<body class="dashboard-page">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h2>🏢 DiixWhatsapp</h2>
+      <p>Painel Admin</p>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="#dashboard" class="nav-item active" data-section="dashboard">
+        <span class="nav-icon">📊</span>
+        <span class="nav-text">Dashboard</span>
+      </a>
+      <a href="#tenants" class="nav-item" data-section="tenants">
+        <span class="nav-icon">🏢</span>
+        <span class="nav-text">Tenants</span>
+      </a>
+      <a href="#products" class="nav-item" data-section="products">
+        <span class="nav-icon">📦</span>
+        <span class="nav-text">Produtos</span>
+      </a>
+      <a href="#users" class="nav-item" data-section="users">
+        <span class="nav-icon">👥</span>
+        <span class="nav-text">Usuários</span>
+      </a>
+      <a href="#settings" class="nav-item" data-section="settings">
+        <span class="nav-icon">⚙️</span>
+        <span class="nav-text">Configurações</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button id="logoutBtn" class="btn btn-danger btn-full">
+        <span class="nav-icon">🚪</span>
+        <span class="nav-text">Sair</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Top Bar -->
+    <header class="top-bar">
+      <div class="top-bar-left">
+        <button class="menu-toggle" id="menuToggle">☰</button>
+        <h1 id="pageTitle">Dashboard</h1>
+      </div>
+      <div class="top-bar-right">
+        <div class="user-info">
+          <span class="user-avatar" id="userAvatar">👤</span>
+          <div class="user-details">
+            <span class="user-name" id="userName">Carregando...</span>
+            <span class="user-role" id="userRole">Admin</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Dashboard Section -->
+    <section id="dashboardSection" class="content-section active">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">🏢</div>
+          <div class="stat-info">
+            <h3 id="totalTenants">0</h3>
+            <p>Total de Tenants</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">📦</div>
+          <div class="stat-info">
+            <h3 id="totalProducts">0</h3>
+            <p>Total de Produtos</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">👥</div>
+          <div class="stat-info">
+            <h3 id="totalUsers">0</h3>
+            <p>Total de Usuários</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">✅</div>
+          <div class="stat-info">
+            <h3 id="activeTenants">0</h3>
+            <p>Tenants Ativos</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="dashboard-grid">
+        <div class="card">
+          <div class="card-header">
+            <h3>📈 Estatísticas da Plataforma</h3>
+          </div>
+          <div class="card-body">
+            <div id="platformStats">
+              <p>Carregando estatísticas...</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>🔧 Ações Rápidas</h3>
+          </div>
+          <div class="card-body">
+            <div class="quick-actions">
+              <button class="btn btn-primary" onclick="showSection('tenants')">Gerenciar Tenants</button>
+              <button class="btn btn-success" onclick="showSection('products')">Ver Produtos</button>
+              <button class="btn btn-info" onclick="window.open('/docs', '_blank')">Documentação</button>
+              <button class="btn btn-warning" onclick="window.open('/api-docs', '_blank')">Swagger UI</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tenants Section -->
+    <section id="tenantsSection" class="content-section">
+      <div class="section-header">
+        <h2>Gerenciamento de Tenants</h2>
+        <button class="btn btn-primary" id="newTenantBtn">+ Novo Tenant</button>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="data-table" id="tenantsTable">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Nome</th>
+                  <th>Slug</th>
+                  <th>Plano</th>
+                  <th>Status</th>
+                  <th>Criado Em</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="tenantsTableBody">
+                <tr>
+                  <td colspan="7" class="text-center">Carregando tenants...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Products Section -->
+    <section id="productsSection" class="content-section">
+      <div class="section-header">
+        <h2>Gerenciamento de Produtos</h2>
+        <button class="btn btn-primary" id="newProductBtn">+ Novo Produto</button>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="data-table" id="productsTable">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Nome</th>
+                  <th>Categoria</th>
+                  <th>Preço</th>
+                  <th>Estoque</th>
+                  <th>Status</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="productsTableBody">
+                <tr>
+                  <td colspan="7" class="text-center">Selecione um tenant para ver produtos</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Users Section -->
+    <section id="usersSection" class="content-section">
+      <div class="section-header">
+        <h2>Gerenciamento de Usuários</h2>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+          <p>Funcionalidade em desenvolvimento...</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Settings Section -->
+    <section id="settingsSection" class="content-section">
+      <div class="section-header">
+        <h2>Configurações do Sistema</h2>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+          <p>Funcionalidade em desenvolvimento...</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal para Novo Tenant -->
+  <div id="tenantModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modalTitle">Novo Tenant</h3>
+        <button class="modal-close" id="modalClose">&times;</button>
+      </div>
+      <form id="tenantForm">
+        <div class="form-group">
+          <label for="tenantName">Nome do Tenant</label>
+          <input type="text" id="tenantName" name="name" required placeholder="Empresa XYZ">
+        </div>
+        <div class="form-group">
+          <label for="tenantSlug">Slug (URL única)</label>
+          <input type="text" id="tenantSlug" name="slug" required placeholder="empresa-xyz">
+        </div>
+        <div class="form-group">
+          <label for="tenantPlan">Plano</label>
+          <select id="tenantPlan" name="plan" required>
+            <option value="free">Free</option>
+            <option value="basic">Basic</option>
+            <option value="pro">Pro</option>
+            <option value="enterprise">Enterprise</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="tenantMaxUsers">Máximo de Usuários</label>
+          <input type="number" id="tenantMaxUsers" name="maxUsers" value="10">
+        </div>
+        <div class="form-group">
+          <label for="tenantMaxProducts">Máximo de Produtos</label>
+          <input type="number" id="tenantMaxProducts" name="maxProducts" value="100">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="modalCancel">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Salvar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/public/js/api-test.js"></script>
+  <script src="/public/js/dashboard.js"></script>
+</body>
+</html>

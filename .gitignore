@@ -1,1 +1,21 @@
-(docs/API_EJS_SETUP.md, public/js/api-test.js, src/app.js, views/documentation.ejs)
+```
+# Dependencies
+node_modules/
+
+# Logs and temp files
+*.log
+*.tmp
+
+# Environment
+.env
+.env.local
+.env.*
+
+# Editors
+.vscode/
+.idea/
+
+# Build outputs
+dist/
+build/
+```
