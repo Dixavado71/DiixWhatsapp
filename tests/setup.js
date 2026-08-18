@@ -1,4 +1,5 @@
 // Setup file for backend tests
+import { jest } from '@jest/globals';
 
 // Mock console em testes
 global.console = {
